@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Controller</string>
+
+    <!-- Toast messages -->
+    <string name="toast_connectionToRemoteApiSuccessful">Connection to Remote API successful</string>
+    <string name="toast_connectionToRemoteApiFailed">Connection to Remote API failed</string>
+
+</resources>
