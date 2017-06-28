@@ -10,16 +10,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import coppelia.CharWA;
 import coppelia.IntW;
+import coppelia.IntWA;
 import coppelia.remoteApi;
+import tum.controller.helper.Duplex;
 import tum.controller.sensors.Accelerometer;
 import tum.controller.sensors.Gyroscope;
 import tum.controller.sensors.RotationVector;
 
 public class MainActivity extends Activity implements SensorEventListener {
 
-    // Object name of the arm in V-REP
+    // V-REP variables
+    private int clientID;
     private String objectName = "IRB140#0";
+    private remoteApi vrep;
+    private String nameArmCamera = "Vision_sensor";
 
     // Widgets
     private Button buttonConnect;
@@ -36,6 +42,8 @@ public class MainActivity extends Activity implements SensorEventListener {
     private float rollAngle; // From gyroscope
     private float pitchAngle; // From gyroscope
     private float[] rotationVector; // From rotation vector
+
+    // V-REP arm handles
 
 
     @Override
@@ -80,10 +88,10 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     // Initialises the remote API
     private void initRemoteApi() {
-        remoteApi vrep = new remoteApi();
+        vrep = new remoteApi();
         vrep.simxFinish(-1); // close all opened connections in case
 
-        int clientID = vrep.simxStart("127.0.0.1", 19997, true, true, 5000, 5);
+        clientID = vrep.simxStart("127.0.0.1", 19997, true, true, 5000, 5);
         if (clientID != -1) {
             Toast.makeText(this, R.string.toast_connectionToRemoteApiSuccessful, Toast.LENGTH_SHORT).show();
 
@@ -125,7 +133,6 @@ public class MainActivity extends Activity implements SensorEventListener {
         mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-
     // =============================================================
     //          SENSOREVENTLISTENER IMPLEMENTATION METHODS
     // =============================================================
@@ -154,6 +161,39 @@ public class MainActivity extends Activity implements SensorEventListener {
             default :
                 break;
         }
+    }
+
+    // =============================================================
+    //                      V-REP METHODS
+    // =============================================================
+
+    // Obtains the handle of the camera object in V-REP
+    private int getHandleArmCamera() {
+        IntW handleArmCamera = new IntW(1);
+
+        vrep.simxGetObjectHandle(clientID,
+                                nameArmCamera, // name of the camera object
+                                handleArmCamera, // handle of the camera object
+                                remoteApi.simx_opmode_blocking);
+
+        return handleArmCamera.getValue();
+    }
+
+    // Returns the image details of the object currently picked up by the arm
+    private Duplex<IntWA, CharWA> getImageDataFromArmCamera() {
+        IntWA imageResolution = new IntWA(2); // int array to store the resolution of the image
+        CharWA imageData = new CharWA(65536); // char array to store the image data
+
+        int handleArmCamera = getHandleArmCamera(); // to obtain the handle of the camera object
+
+        vrep.simxGetVisionSensorImage(clientID,
+                                        handleArmCamera,
+                                        imageResolution,
+                                        imageData,
+                                        0, // image options; set to 0 for RGB
+                                        remoteApi.simx_opmode_streaming);
+
+        return new Duplex<>(imageResolution, imageData);
     }
 
 }
