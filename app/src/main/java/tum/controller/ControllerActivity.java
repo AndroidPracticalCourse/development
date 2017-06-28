@@ -6,6 +6,10 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import coppelia.CharWA;
 import coppelia.IntW;
@@ -21,7 +25,12 @@ public class ControllerActivity extends Activity implements SensorEventListener 
     // V-REP variables
     private remoteApi vrep;
     private int clientID;
-    private String nameArmCamera = "Vision_sensor";
+
+    // V-REP objects
+    private final String nameArm = "IRB140_link2#0";
+    private final String nameWrist = "IRB140_link3#0";
+    private final String nameArmCamera = "Vision_sensor";
+    private String nameCurrSelComponent = nameArm; // stores the name of the arm or wrist component, depending on the selected mode
 
     // Sensors and data
     private SensorManager mSensorManager;
@@ -34,12 +43,17 @@ public class ControllerActivity extends Activity implements SensorEventListener 
     private float pitchAngle; // From gyroscope
     private float[] rotationVector; // From rotation vector
 
+    // Logging
+    private static final String TAG = "ControllerActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_controller);
 
-        init();
+        initData();
+        initWidgets();
+
         startSensors();
     }
 
@@ -47,9 +61,29 @@ public class ControllerActivity extends Activity implements SensorEventListener 
     //                  INITIALISATION METHODS
     // =============================================================
 
-    private void init() {
+    private void initData() {
         vrep = new remoteApi();
         clientID = getIntent().getIntExtra(getString(R.string.str_clientID), -1);
+    }
+
+    // Initialises the widgets and the respective click handlers
+    private void initWidgets() {
+        Button buttonToggleMode = (Button) findViewById(R.id.btn_toggleMode);
+        buttonToggleMode.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) { // Toggles between arm and wrist mode; arm mode selected by default
+                TextView selMode = (TextView) findViewById(R.id.text_currModeSel);
+                if (selMode.toString().equals(getString(R.string.str_arm))) {
+                    nameCurrSelComponent = nameWrist;
+                    selMode.setText(R.string.str_wrist);
+                } else if (selMode.toString().equals(getString(R.string.str_wrist))) {
+                    nameCurrSelComponent = nameArm;
+                    selMode.setText(R.string.str_arm);
+                }
+            }
+        });
+
+        Button buttonClaw = (Button) findViewById(R.id.btn_claw);
+        // TODO - click handler for claw button
     }
 
     // =============================================================
@@ -82,12 +116,14 @@ public class ControllerActivity extends Activity implements SensorEventListener 
             mRotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
             registerSensorListeners();
+            Log.i(TAG, "Sensors started");
         }
     }
 
     private void stopSensors() {
         isSensorsStarted = false;
         mSensorManager.unregisterListener(this);
+        Log.i(TAG, "Sensors stopped");
     }
 
     private void registerSensorListeners() {
@@ -130,14 +166,17 @@ public class ControllerActivity extends Activity implements SensorEventListener 
     //                      V-REP METHODS
     // =============================================================
 
-    // Obtains the handle of the camera object in V-REP
+    // Sends any movement data from the device sensors to the arm/wrist object in the V-REP simulator
+    private void sendDataToComponent() {
+        IntW handleSelComponent = new IntW(1);
+
+        vrep.simxGetObjectHandle(clientID, nameCurrSelComponent, handleSelComponent, remoteApi.simx_opmode_blocking);
+    }
+
+    // Obtains the handle of the camera object
     private int getHandleArmCamera() {
         IntW handleArmCamera = new IntW(1);
-
-        vrep.simxGetObjectHandle(clientID,
-                nameArmCamera, // name of the camera object
-                handleArmCamera, // handle of the camera object
-                remoteApi.simx_opmode_blocking);
+        vrep.simxGetObjectHandle(clientID, nameArmCamera, handleArmCamera, remoteApi.simx_opmode_blocking);
 
         return handleArmCamera.getValue();
     }

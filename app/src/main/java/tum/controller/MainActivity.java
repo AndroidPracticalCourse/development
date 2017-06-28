@@ -14,6 +14,9 @@ public class MainActivity extends Activity {
 
     private String nameArm = "IRB140#0";
 
+    // Logging
+    private static final String TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

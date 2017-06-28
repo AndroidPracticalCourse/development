@@ -14,8 +14,10 @@
     <string name="str_connect">Connect</string>
 
     <!-- ControllerActivity -->
-    <string name="str_armMode">Arm Mode</string>
-    <string name="str_wristMode">Wrist Mode</string>
+    <string name="str_currMode">Current Mode</string>
+    <string name="str_toggle">Toggle</string>
     <string name="str_pickupdrop">Pick up / Drop</string>
+    <string name="str_arm">ARM</string>
+    <string name="str_wrist">WRIST</string>
 
 </resources>
