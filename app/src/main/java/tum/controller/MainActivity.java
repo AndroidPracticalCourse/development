@@ -3,6 +3,7 @@ package tum.controller;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -50,7 +51,7 @@ public class MainActivity extends Activity {
 
             IntW object = new IntW(1);
             vrep.simxGetObjectHandle(clientID, nameArm, object, remoteApi.simx_opmode_oneshot_wait);
-            Toast.makeText(this, "Object value = " + object.getValue(), Toast.LENGTH_SHORT).show();
+            Log.i(TAG, "Object value = " + object.getValue());
 
             Intent intent = new Intent(this, ControllerActivity.class);
             intent.putExtra(getString(R.string.str_clientID), clientID);

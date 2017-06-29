@@ -27,8 +27,8 @@ public class ControllerActivity extends Activity implements SensorEventListener 
     private int clientID;
 
     // V-REP objects
-    private final String nameArm = "IRB140_link2#0";
-    private final String nameWrist = "IRB140_link3#0";
+    private final String nameArm = "IRB140_joint3#0";
+    private final String nameWrist = "IRB140_joint5#0";
     private final String nameArmCamera = "Vision_sensor";
     private String nameCurrSelComponent = nameArm; // stores the name of the arm or wrist component, depending on the selected mode
 
@@ -160,6 +160,8 @@ public class ControllerActivity extends Activity implements SensorEventListener 
             default :
                 break;
         }
+
+        sendDataToComponent();
     }
 
     // =============================================================
@@ -171,6 +173,10 @@ public class ControllerActivity extends Activity implements SensorEventListener 
         IntW handleSelComponent = new IntW(1);
 
         vrep.simxGetObjectHandle(clientID, nameCurrSelComponent, handleSelComponent, remoteApi.simx_opmode_blocking);
+
+        // TODO - edit this portion
+        vrep.simxSetJointPosition(clientID, handleSelComponent.getValue(), rollAngle, remoteApi.simx_opmode_oneshot);
+        vrep.simxSetJointPosition(clientID, handleSelComponent.getValue(), pitchAngle, remoteApi.simx_opmode_oneshot);
     }
 
     // Obtains the handle of the camera object
