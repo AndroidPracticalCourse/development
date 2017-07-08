@@ -23,9 +23,7 @@ public class Server implements Runnable{
 			   DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 			while (true) {
 				  String receivebuffer = inFromClient.readLine();
-				  if(receivebuffer=="CONNECT_REQUEST"){
-					  outToClient.writeBytes("CONNECT_ACCEPT\n");
-				  }
+				  
 				  
 				   clientCmd = Integer.parseInt(receivebuffer);
 				  
