@@ -9,9 +9,14 @@ public class ServerStarter {
 	public static void main(String[] args){
 		remoteApi vrep = new remoteApi();
         vrep.simxFinish(-1); // just in case, close all opened connections
+        System.out.println("Connecting to V-REP via Remote API...");
         int clientID = vrep.simxStart(IP,Port,true,true,5000,5);
         System.out.println("ClientID is = "+clientID);
         System.out.println("ConnectionID is = "+vrep.simxGetConnectionId(clientID));
+        if(clientID==-1){
+        	System.out.println("ERROR, CANNOT CONNECT TO V-REP! SERVER ADAPTER TERMINATED.");
+        	System.exit(0);
+        }
         System.out.println("Starting server thread...");
     	Server server = new Server(vrep, clientID);
     	Thread serverthread = new Thread(server);
@@ -44,6 +49,7 @@ public class ServerStarter {
         	
         }
         System.out.println("Program ended");
+        System.exit(0);
 	}
 }
 

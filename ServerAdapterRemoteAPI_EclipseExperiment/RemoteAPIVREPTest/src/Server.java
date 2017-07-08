@@ -22,8 +22,13 @@ public class Server implements Runnable{
 			    new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 			   DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 			while (true) {
+				  String receivebuffer = inFromClient.readLine();
+				  if(receivebuffer=="CONNECT_REQUEST"){
+					  outToClient.writeBytes("CONNECT_ACCEPT\n");
+				  }
 				  
-				   clientCmd = Integer.parseInt(inFromClient.readLine());
+				   clientCmd = Integer.parseInt(receivebuffer);
+				  
 				   System.out.println("Received: " + clientCmd);
 				   if(clientCmd==1){
 					   vrep.simxStartSimulation(clientID, clientID);

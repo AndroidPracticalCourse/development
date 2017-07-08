@@ -12,6 +12,7 @@ public class Client {
 			  DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
 			  BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			  userinput="-1";
+			  outToServer.writeBytes("CONNECT_REQUEST"+'\n');
 		while(Integer.parseInt(userinput)!=9){
 			  userinput = inFromUser.readLine();
 			  System.out.println(userinput);
