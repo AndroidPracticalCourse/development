@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">Remote API Server Connect</string>
+
+    <!-- MainActivity -->
+
+    <string name="text_tooltip">Make sure that you have opened both Server Adapter and V-REP with the scene file loaded first.</string>
+    <string name="text_ip">IP Address</string>
+    <string name="input_ip">192.168.0.156</string>
+    <string name="text_port">Port</string>
+    <string name="input_port">6789</string>
+    <string name="text_connect">Connect</string>
+
+    <string name="msg_remoteApiConnectReq">REMOTEAPI_CONNECTREQ</string>
+    <string name="msg_remoteApiConnectAccept">REMOTEAPI_CONNECTACCEPT</string>
+    <string name="toast_connToServerAccept">Connection to server accepted.</string>
+    <string name="toast_handshakeError">Handshake error</string>
+    <string name="toast_cantConnectError">Error! Cannot Connect.</string>
+    <string name="toast_invalidIPFormat">Invalid IP format</string>
+
+    <!-- ControlUI1 -->
+
+    <string name="text_connectedTo">Connected to</string>
+    <string name="text_startSimulation">Start Simulation</string>
+    <string name="text_pauseSimulation">Pause Simulation</string>
+    <string name="text_stopSimulation">Stop Simulation</string>
+
 </resources>
