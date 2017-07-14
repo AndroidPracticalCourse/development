@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,50 +11,83 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginRight="16dp"
-        android:text="IP and Port of server"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.0" />
+        android:text="@string/text_serverInfo" />
 
-    <Button
-        android:id="@+id/button_start"
+    <TextView
+        android:id="@+id/text_currMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginRight="16dp"
-        android:text="@string/text_startSimulation"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_info"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHorizontal_bias="0.0" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:text="@string/text_currMode"
+        android:textSize="20sp" />
 
-    <Button
-        android:id="@+id/button_pause"
+    <TextView
+        android:id="@+id/text_currModeSel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/text_pauseSimulation"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_start" />
+        android:layout_below="@id/text_currMode"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:text="@string/text_arm"
+        android:textColor="@android:color/black"
+        android:textSize="60sp"/>
 
     <Button
-        android:id="@+id/button_stop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="16dp"
-        android:text="@string/text_stopSimulation"
-        app:layout_constraintTop_toBottomOf="@+id/button_pause"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:id="@+id/btn_toggleMode"
+        android:layout_width="100dp"
+        android:layout_height="70dp"
+        android:text="@string/text_toggle"
+        android:layout_below="@+id/text_currModeSel"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
 
-</android.support.constraint.ConstraintLayout>
+    <!--
+    <Button
+        android:id="@+id/btn_claw"
+        android:layout_width="180dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="59dp"
+        android:text="@string/str_pickupdrop"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+     -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textView_info"
+        android:layout_alignStart="@id/textView_info"
+        android:layout_marginTop="250dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_start"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/text_startSimulation" />
+
+        <Button
+            android:id="@+id/button_pause"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingRight="20dp"
+            android:text="@string/text_pauseSimulation" />
+
+        <Button
+            android:id="@+id/button_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingRight="20dp"
+            android:text="@string/text_stopSimulation" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

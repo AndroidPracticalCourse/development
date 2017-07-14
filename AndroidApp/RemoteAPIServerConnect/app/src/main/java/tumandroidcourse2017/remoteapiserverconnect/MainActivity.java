@@ -67,9 +67,13 @@ public class MainActivity extends Activity {
                 String serverResponse = inFromServer.readLine();
 
                 if (serverResponse.equals(getString(R.string.msg_remoteApiConnectAccept))) {
+                    int clientID = Integer.parseInt(inFromServer.readLine());
+                    System.out.println("clientID = " + clientID);
                     Toast.makeText(MainActivity.this, getString(R.string.toast_connToServerAccept), Toast.LENGTH_SHORT).show();
+
                     Intent controlui1 = new Intent(this, ControlUI1.class);
                     controlui1.putExtra(IPInfoPort, ip + ":" + port);
+                    controlui1.putExtra(getString(R.string.str_clientID), clientID);
                     startActivity(controlui1);
                 } else {
                     Toast.makeText(MainActivity.this, getString(R.string.toast_handshakeError), Toast.LENGTH_SHORT).show();

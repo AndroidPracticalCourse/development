@@ -1,4 +1,4 @@
-package tum.controller.sensors;
+package tumandroidcourse2017.remoteapiserverconnect.sensors;
 
 import android.hardware.SensorEvent;
 

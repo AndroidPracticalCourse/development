@@ -26,6 +26,7 @@ public class Server implements Runnable{
 				  if(receivebuffer.equals("REMOTEAPI_CONNECTREQ")){
 					  System.out.println("Incoming connection accepted");
 					  outToClient.writeBytes("REMOTEAPI_CONNECTACCEPT\n");
+					  outToClient.writeInt(clientID);
 				  }else{
 					  clientCmd = Integer.parseInt(receivebuffer);
 					  System.out.println("Received: " + clientCmd);

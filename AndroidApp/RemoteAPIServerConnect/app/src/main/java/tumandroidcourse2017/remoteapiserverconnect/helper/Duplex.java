@@ -1,4 +1,4 @@
-package tum.controller.helper;
+package tumandroidcourse2017.remoteapiserverconnect.helper;
 
 /*
  * Generic type class
