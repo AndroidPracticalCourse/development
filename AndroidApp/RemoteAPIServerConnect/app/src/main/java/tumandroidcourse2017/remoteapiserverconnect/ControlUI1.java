@@ -13,33 +13,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-import coppelia.CharWA;
-import coppelia.IntW;
-import coppelia.IntWA;
-import coppelia.remoteApi;
-
-import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocket;
-import tumandroidcourse2017.remoteapiserverconnect.helper.Duplex;
 import tumandroidcourse2017.remoteapiserverconnect.sensors.Accelerometer;
 import tumandroidcourse2017.remoteapiserverconnect.sensors.Gyroscope;
 import tumandroidcourse2017.remoteapiserverconnect.sensors.RotationVector;
 
+import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocket;
+
 public class ControlUI1 extends Activity implements SensorEventListener {
 
-    // V-REP variables
-    private remoteApi vrep;
-    private int clientID;
-
-    // V-REP objects
     private final String nameArm = "IRB140_joint3#0";
     private final String nameWrist = "IRB140_joint5#0";
     private final String nameArmCamera = "Vision_sensor";
-    private String nameCurrSelComponent = nameArm; // stores the name of the arm or wrist component, depending on the selected mode
+    private String nameSelComponent = nameArm; // stores the name of the arm or wrist component, depending on the selected mode
 
     // Sensors and data
     private SensorManager mSensorManager;
@@ -53,22 +44,15 @@ public class ControlUI1 extends Activity implements SensorEventListener {
     private float[] rotationVector; // From rotation vector
 
     // Logging
-    private static final String TAG = "ControllerActivity";
+    private static final String TAG = ControlUI1.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control_ui1);
 
-        initData();
         initWidgets();
-
         startSensors();
-    }
-
-    private void initData() {
-        vrep = new remoteApi();
-        clientID = getIntent().getIntExtra(getString(R.string.str_clientID), -1);
     }
 
     private void initWidgets(){
@@ -97,13 +81,14 @@ public class ControlUI1 extends Activity implements SensorEventListener {
         buttonToggleMode.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) { // Toggles between arm and wrist mode; arm mode selected by default
                 TextView selMode = (TextView) findViewById(R.id.text_currModeSel);
-                if (selMode.toString().equals(getString(R.string.text_arm))) {
-                    nameCurrSelComponent = nameWrist;
+                if (nameSelComponent.equals(nameArm)) {
+                    nameSelComponent = nameWrist;
                     selMode.setText(R.string.text_wrist);
-                } else if (selMode.toString().equals(getString(R.string.text_wrist))) {
-                    nameCurrSelComponent = nameArm;
+                } else if (nameSelComponent.equals(nameWrist)) {
+                    nameSelComponent = nameArm;
                     selMode.setText(R.string.text_arm);
                 }
+                System.out.println("nameSelComponent = " + nameSelComponent);
             }
         });
 
@@ -135,7 +120,7 @@ public class ControlUI1 extends Activity implements SensorEventListener {
             isSensorsStarted = true;
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
-            mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+            mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
             mRotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
@@ -152,8 +137,8 @@ public class ControlUI1 extends Activity implements SensorEventListener {
 
     private void registerSensorListeners() {
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(this, mGyroscope, SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_NORMAL);
+        //mSensorManager.registerListener(this, mGyroscope, SensorManager.SENSOR_DELAY_NORMAL);
+        //mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     // =============================================================
@@ -167,10 +152,14 @@ public class ControlUI1 extends Activity implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         switch (event.sensor.getType()) {
-            case Sensor.TYPE_ACCELEROMETER :
+            case Sensor.TYPE_ACCELEROMETER:
                 Accelerometer accelerometer = new Accelerometer(event);
                 acceleration = accelerometer.update();
+                if (acceleration.length == 3) {
+                    sendSensorData();
+                }
                 break;
+            /*
             case Sensor.TYPE_GYROSCOPE :
                 Gyroscope gyroscope = new Gyroscope(event);
                 float[] gyroscopeValues = gyroscope.update();
@@ -181,69 +170,45 @@ public class ControlUI1 extends Activity implements SensorEventListener {
                 RotationVector rotation = new RotationVector(event);
                 rotationVector = rotation.update();
                 break;
-            default :
+                */
+            default:
                 break;
         }
 
-        sendDataToComponent();
     }
 
     // =============================================================
-    //                      V-REP METHODS
+    //                  SOCKET COMMUNICATION METHODS
     // =============================================================
 
-    // Sends any movement data from the device sensors to the arm/wrist object in the V-REP simulator
-    private void sendDataToComponent() {
-        IntW handleSelComponent = new IntW(1);
-
-        vrep.simxGetObjectHandle(clientID, nameCurrSelComponent, handleSelComponent, remoteApi.simx_opmode_blocking);
-
-        // TODO - edit this portion
-        vrep.simxSetJointPosition(clientID, handleSelComponent.getValue(), rollAngle, remoteApi.simx_opmode_oneshot);
-        vrep.simxSetJointPosition(clientID, handleSelComponent.getValue(), pitchAngle, remoteApi.simx_opmode_oneshot);
-    }
-
-    // Obtains the handle of the camera object
-    private int getHandleArmCamera() {
-        IntW handleArmCamera = new IntW(1);
-        vrep.simxGetObjectHandle(clientID, nameArmCamera, handleArmCamera, remoteApi.simx_opmode_blocking);
-
-        return handleArmCamera.getValue();
-    }
-
-    // Returns the image details of the object currently picked up by the arm
-    private Duplex<IntWA, CharWA> getImageDataFromArmCamera() {
-        IntWA imageResolution = new IntWA(2); // int array to store the resolution of the image
-        CharWA imageData = new CharWA(65536); // char array to store the image data
-
-        int handleArmCamera = getHandleArmCamera(); // to obtain the handle of the camera object
-
-        vrep.simxGetVisionSensorImage(clientID,
-                handleArmCamera,
-                imageResolution,
-                imageData,
-                0, // image options; set to 0 for RGB
-                remoteApi.simx_opmode_streaming);
-
-        return new Duplex<>(imageResolution, imageData);
-    }
-
-    // =============================================================
-    //                      HELPER METHODS
-    // =============================================================
-
-    private void sendCommand(int userInput){
+    private void sendCommand(int userInput) {
         try {
             Socket clientSocket = getSocket();
             DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
             BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+            outToServer.writeBytes(getString(R.string.msg_simulation) + '\n');
             outToServer.writeBytes(userInput + "" + '\n');
             Toast.makeText(ControlUI1.this, "FROM SERVER: " + inFromServer.readLine(), Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(ControlUI1.this, e.toString(), Toast.LENGTH_SHORT).show();
         }
+    }
 
+    private void sendSensorData() {
+        try {
+            Socket clientSocket = getSocket();
+            DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
 
+            outToServer.writeBytes(getString(R.string.msg_sensordata) + '\n');
+            outToServer.writeBytes(nameSelComponent + '\n');
+
+            // Accelerometer
+            for (int i = 0; i < acceleration.length; i++) {
+                outToServer.writeBytes(acceleration[i] + "" + '\n');
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

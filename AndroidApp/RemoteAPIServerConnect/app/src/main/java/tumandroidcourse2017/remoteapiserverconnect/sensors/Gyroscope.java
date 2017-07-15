@@ -14,7 +14,7 @@ public class Gyroscope {
     private SensorEvent event;
     private long lastUpdateTime;
 
-    private static final float NS2S = 1.0f / 1000000000.0f;
+    private static final float NS2S = 1.0f / 1000000000.0f; // nanoseconds to seconds
     private float rollAngle = 0;
     private float pitchAngle = 0;
     private float previousRollAngle = 0;

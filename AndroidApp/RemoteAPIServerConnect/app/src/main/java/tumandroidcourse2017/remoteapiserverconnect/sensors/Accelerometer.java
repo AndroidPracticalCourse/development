@@ -10,10 +10,15 @@ import android.hardware.SensorEvent;
 public class Accelerometer {
 
     // Parameter to determine how often the accelerometer sensor state is to be updated (in milliseconds)
-    private static final int UPDATE_FREQ = 100;
+    private static final int UPDATE_FREQ = 200;
 
     private SensorEvent event;
     private long lastUpdateTime;
+
+    // Adjustable threshold to configure the sensitivity
+    private double noiseX = 0.2;
+    private double noiseY = 0.2;
+    private double noiseZ = 8.0;
 
     public Accelerometer(SensorEvent event) {
         this.event = event;
@@ -31,15 +36,21 @@ public class Accelerometer {
             // A high-pass filter is used here
             final float alpha = Float.valueOf("0.8");
 
+            // Isolate the force of gravity
             gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
             gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
             gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
 
+            // Remove the gravity contribution
             linearAcceleration[0] = event.values[0] - gravity[0];
             linearAcceleration[1] = event.values[1] - gravity[1];
             linearAcceleration[2] = event.values[2] - gravity[2];
 
-            return linearAcceleration;
+            if (linearAcceleration[0] > noiseX || linearAcceleration[1] > noiseY || linearAcceleration[2] > noiseZ) {
+                System.out.println("Linear acceleration: [" + linearAcceleration[0] + ", " +
+                        linearAcceleration[1] + ", " + linearAcceleration[2] + "]");
+                return linearAcceleration;
+            }
         }
 
         return new float[]{};

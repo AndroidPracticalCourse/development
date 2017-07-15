@@ -63,11 +63,17 @@ public class MainActivity extends Activity {
 
                 BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-                outToServer.writeBytes(getString(R.string.msg_remoteApiConnectReq) + '\n');
+                System.out.println("Writing some bytes");
+                outToServer.writeBytes("REMOTEAPI_CONNECTREQ\n");
+                System.out.println("Bytes written");
                 String serverResponse = inFromServer.readLine();
+                System.out.println("Server response read");
 
                 if (serverResponse.equals(getString(R.string.msg_remoteApiConnectAccept))) {
-                    int clientID = Integer.parseInt(inFromServer.readLine());
+                    System.out.println("Connection accepted");
+                    String id = inFromServer.readLine();
+                    System.out.println("id = " + id);
+                    int clientID = Integer.parseInt(id);
                     System.out.println("clientID = " + clientID);
                     Toast.makeText(MainActivity.this, getString(R.string.toast_connToServerAccept), Toast.LENGTH_SHORT).show();
 

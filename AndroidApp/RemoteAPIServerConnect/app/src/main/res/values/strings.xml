@@ -5,7 +5,7 @@
 
     <string name="text_tooltip">Make sure that you have opened both Server Adapter and V-REP with the scene file loaded first.</string>
     <string name="text_ip">IP Address</string>
-    <string name="input_ip">192.168.0.156</string>
+    <string name="input_ip">192.168.137.1</string>
     <string name="text_port">Port</string>
     <string name="input_port">6789</string>
     <string name="text_connect">Connect</string>
@@ -29,5 +29,8 @@
     <string name="text_startSimulation">Start Simulation</string>
     <string name="text_pauseSimulation">Pause Simulation</string>
     <string name="text_stopSimulation">Stop Simulation</string>
+
+    <string name="msg_simulation">SIMULATION</string>
+    <string name="msg_sensordata">SENSORDATA</string>
 
 </resources>
