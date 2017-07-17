@@ -12,13 +12,13 @@ public class Accelerometer {
     // Parameter to determine how often the accelerometer sensor state is to be updated (in milliseconds)
     private static final int UPDATE_FREQ = 200;
 
+    // Adjustable threshold to configure the sensitivity
+    private final double noiseX = 0.2;
+    private final double noiseY = 0.2;
+    private final double noiseZ = 8.0;
+
     private SensorEvent event;
     private long lastUpdateTime;
-
-    // Adjustable threshold to configure the sensitivity
-    private double noiseX = 0.2;
-    private double noiseY = 0.2;
-    private double noiseZ = 8.0;
 
     public Accelerometer(SensorEvent event) {
         this.event = event;

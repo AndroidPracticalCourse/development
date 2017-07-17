@@ -47,6 +47,7 @@ public class Server implements Runnable {
     }
 
     private void modifySimulation(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException {
+		
         int clientCmd = Integer.parseInt(inFromClient.readLine());
         System.out.println("Received: " + clientCmd);
         if (clientCmd == 1) {
@@ -63,7 +64,11 @@ public class Server implements Runnable {
             vrep.simxStopSimulation(clientID, clientID);
             System.out.println("V-REP simulation stopped as requested");
             outToClient.writeBytes("V-REP simulation stopped as requested\n");
+        } else {
+        	System.exit(0);
         }
+
+        
     }
 
     private void receiveSensorData(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException {
