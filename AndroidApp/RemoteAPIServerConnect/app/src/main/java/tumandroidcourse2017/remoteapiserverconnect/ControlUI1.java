@@ -26,7 +26,7 @@ import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocke
 
 public class ControlUI1 extends Activity implements SensorEventListener {
 
-    private final String nameArm = "IRB140_joint3#0";
+    private final String nameArm = "IRB140_joint2#0";
     private final String nameWrist = "IRB140_joint5#0";
     private final String nameArmCamera = "Vision_sensor";
     private String nameSelComponent = nameArm; // stores the name of the arm or wrist component, depending on the selected mode
@@ -37,7 +37,11 @@ public class ControlUI1 extends Activity implements SensorEventListener {
     private Sensor mGyroscope;
     private Sensor mRotation;
     private boolean isSensorsStarted;
-    private float[] acceleration; // From accelerometer
+    // Acccelerometer
+    private float velocity;
+    private long accelerometerLastUpdateTime = 0;
+    private double[] lastAccelerometerValues = {0.0, 0.0, 0.0};
+    private double startingVelocity = 0.0;
     private float rollAngle; // From gyroscope
     private float pitchAngle; // From gyroscope
     private float[] rotationVector; // From rotation vector
@@ -79,15 +83,15 @@ public class ControlUI1 extends Activity implements SensorEventListener {
         Button buttonToggleMode = (Button) findViewById(R.id.btn_toggleMode);
         buttonToggleMode.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) { // Toggles between arm and wrist mode; arm mode selected by default
-                TextView selMode = (TextView) findViewById(R.id.text_currModeSel);
-                if (nameSelComponent.equals(nameArm)) {
-                    nameSelComponent = nameWrist;
-                    selMode.setText(R.string.text_wrist);
-                } else if (nameSelComponent.equals(nameWrist)) {
-                    nameSelComponent = nameArm;
-                    selMode.setText(R.string.text_arm);
-                }
-                System.out.println("nameSelComponent = " + nameSelComponent);
+            TextView selMode = (TextView) findViewById(R.id.text_currModeSel);
+            if (nameSelComponent.equals(nameArm)) {
+                nameSelComponent = nameWrist;
+                selMode.setText(R.string.text_wrist);
+            } else if (nameSelComponent.equals(nameWrist)) {
+                nameSelComponent = nameArm;
+                selMode.setText(R.string.text_arm);
+            }
+            System.out.println("nameSelComponent = " + nameSelComponent);
             }
         });
 
@@ -152,11 +156,13 @@ public class ControlUI1 extends Activity implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
-                Accelerometer accelerometer = new Accelerometer(event);
-                acceleration = accelerometer.update();
-                if (acceleration.length == 3) {
-                    sendSensorData();
-                }
+                Accelerometer accelerometer = new Accelerometer(event, accelerometerLastUpdateTime, lastAccelerometerValues, startingVelocity);
+                velocity = accelerometer.calculateVelocity();
+                accelerometerLastUpdateTime = accelerometer.getLastUpdateTime();
+                lastAccelerometerValues = accelerometer.getLastAccelerometerValues();
+                startingVelocity = accelerometer.getStartingVelocity();
+
+                sendSensorData(Sensor.TYPE_ACCELEROMETER);
                 break;
             /*
             case Sensor.TYPE_GYROSCOPE :
@@ -194,7 +200,7 @@ public class ControlUI1 extends Activity implements SensorEventListener {
         }
     }
 
-    private void sendSensorData() {
+    private void sendSensorData(int sensor) {
         try {
             Socket clientSocket = getSocket();
             DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
@@ -202,9 +208,13 @@ public class ControlUI1 extends Activity implements SensorEventListener {
             outToServer.writeBytes(getString(R.string.msg_sensordata) + '\n');
             outToServer.writeBytes(nameSelComponent + '\n');
 
-            // Accelerometer
-            for (int i = 0; i < acceleration.length; i++) {
-                outToServer.writeBytes(acceleration[i] + "" + '\n');
+            switch (sensor) {
+                case Sensor.TYPE_ACCELEROMETER:
+                    outToServer.writeBytes("accelerometer" + '\n');
+                    outToServer.writeBytes(velocity + "" + '\n');
+                    break;
+                default :
+                    break;
             }
         } catch (IOException e) {
             e.printStackTrace();

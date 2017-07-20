@@ -28,23 +28,14 @@ public class ServerStarter {
         	System.out.println("You can manually type in command in console to interface with V-REP. Read source code for command.");
         	menuchoice = sc.nextInt();
         	
-            //Test code
-            IntW handleSelComponent = new IntW(1);
-            vrep.simxGetObjectHandle(clientID, "IRB140_joint2#0", handleSelComponent, remoteApi.simx_opmode_blocking);
-            FloatW pos = new FloatW(Float.valueOf("0.0"));
-            System.out.println("handleSelComponent = " + handleSelComponent.getValue());        
-
-            vrep.simxGetJointPosition(clientID, handleSelComponent.getValue(), pos, vrep.simx_opmode_streaming);
-            System.out.println("pos = " + pos.getValue());
-
-        	
         	if(menuchoice==1){
-        		//start simulation
+                //vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.01"), remoteApi.simx_opmode_oneshot);
+                //start simulation
                 vrep.simxStartSimulation(clientID, clientID);
         	}
         	if(menuchoice==2){
+                //vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.0"), remoteApi.simx_opmode_oneshot);
         		//pause simulation
-                vrep.simxSetJointPosition(clientID, handleSelComponent.getValue(), Float.valueOf("2"), vrep.simx_opmode_streaming);
                 vrep.simxPauseSimulation(clientID, clientID);
         	}
         	if(menuchoice==3){

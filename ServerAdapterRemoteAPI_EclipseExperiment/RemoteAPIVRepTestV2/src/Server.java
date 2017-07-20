@@ -67,22 +67,28 @@ public class Server implements Runnable {
         } else {
         	System.exit(0);
         }
-
-        
     }
 
     private void receiveSensorData(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException {
         String nameSelComponent = inFromClient.readLine();
+        String sensorType = inFromClient.readLine();
 		
         // Obtains the handle of the selected component based on its name
 		IntW handleSelComponent = new IntW(1);
         vrep.simxGetObjectHandle(clientID, nameSelComponent, handleSelComponent, remoteApi.simx_opmode_blocking);
 
-        // Obtain acceleration data
-        String accelerationX = inFromClient.readLine();
-     	String accelerationY = inFromClient.readLine();
-        String accelerationZ = inFromClient.readLine();
-        System.out.println("Acceleration = [" + accelerationX + ", " + accelerationY + ", " + accelerationZ + "]");
+        switch (sensorType) {
+        	case "accelerometer" :
+		        String velocity = inFromClient.readLine();
+		        float velocityInFloat = Float.valueOf(velocity) / 100; 
+		        if (velocityInFloat < 1.0) {
+		        	System.out.println("velocity = " + velocityInFloat);
+	        		vrep.simxSetFloatSignal(clientID, "rotate", velocityInFloat, remoteApi.simx_opmode_oneshot);
+	        	}
+	        	break;
+	        default :
+	        	break;
+        }
     }
 
 }
