@@ -19,8 +19,6 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 import tumandroidcourse2017.remoteapiserverconnect.sensors.Accelerometer;
-import tumandroidcourse2017.remoteapiserverconnect.sensors.Gyroscope;
-import tumandroidcourse2017.remoteapiserverconnect.sensors.RotationVector;
 
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocket;
 
@@ -34,17 +32,11 @@ public class ControlUI1 extends Activity implements SensorEventListener {
     // Sensors and data
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
-    private Sensor mGyroscope;
-    private Sensor mRotation;
+    private Sensor mGravity;
     private boolean isSensorsStarted;
     // Acccelerometer
-    private float velocity;
+    private int inclinationAngle;
     private long accelerometerLastUpdateTime = 0;
-    private double[] lastAccelerometerValues = {0.0, 0.0, 0.0};
-    private double startingVelocity = 0.0;
-    private float rollAngle; // From gyroscope
-    private float pitchAngle; // From gyroscope
-    private float[] rotationVector; // From rotation vector
 
     // Logging
     private static final String TAG = ControlUI1.class.getSimpleName();
@@ -124,8 +116,9 @@ public class ControlUI1 extends Activity implements SensorEventListener {
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
             mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-            mRotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+            mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+            //mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+            //mRotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
             registerSensorListeners();
             Log.i(TAG, "Sensors started");
@@ -140,6 +133,7 @@ public class ControlUI1 extends Activity implements SensorEventListener {
 
     private void registerSensorListeners() {
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(this, mGravity, SensorManager.SENSOR_DELAY_NORMAL);
         //mSensorManager.registerListener(this, mGyroscope, SensorManager.SENSOR_DELAY_NORMAL);
         //mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -156,14 +150,13 @@ public class ControlUI1 extends Activity implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
-                Accelerometer accelerometer = new Accelerometer(event, accelerometerLastUpdateTime, lastAccelerometerValues, startingVelocity);
-                velocity = accelerometer.calculateVelocity();
+                Accelerometer accelerometer = new Accelerometer(event, accelerometerLastUpdateTime);
+                inclinationAngle = accelerometer.calculateRotation();
                 accelerometerLastUpdateTime = accelerometer.getLastUpdateTime();
-                lastAccelerometerValues = accelerometer.getLastAccelerometerValues();
-                startingVelocity = accelerometer.getStartingVelocity();
 
-                sendSensorData(Sensor.TYPE_ACCELEROMETER);
+                sendSensorData(event.sensor.getType());
                 break;
+
             /*
             case Sensor.TYPE_GYROSCOPE :
                 Gyroscope gyroscope = new Gyroscope(event);
@@ -211,11 +204,12 @@ public class ControlUI1 extends Activity implements SensorEventListener {
             switch (sensor) {
                 case Sensor.TYPE_ACCELEROMETER:
                     outToServer.writeBytes("accelerometer" + '\n');
-                    outToServer.writeBytes(velocity + "" + '\n');
+                    outToServer.writeBytes(inclinationAngle + "" + '\n');
                     break;
                 default :
                     break;
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }

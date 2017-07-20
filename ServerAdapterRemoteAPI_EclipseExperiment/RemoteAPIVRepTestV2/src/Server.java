@@ -79,11 +79,22 @@ public class Server implements Runnable {
 
         switch (sensorType) {
         	case "accelerometer" :
-		        String velocity = inFromClient.readLine();
-		        float velocityInFloat = Float.valueOf(velocity) / 100; 
-		        if (velocityInFloat < 1.0) {
-		        	System.out.println("velocity = " + velocityInFloat);
-	        		vrep.simxSetFloatSignal(clientID, "rotate", velocityInFloat, remoteApi.simx_opmode_oneshot);
+		        int rotationAngle = Integer.parseInt(inFromClient.readLine());
+		        System.out.println("rotationAngle = " + rotationAngle);
+		        if (rotationAngle > -20 && rotationAngle < 20) {
+	        		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.0"), remoteApi.simx_opmode_oneshot);
+	        	} else if (rotationAngle > -45 && rotationAngle <= -20) {
+	        		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("-0.01"), remoteApi.simx_opmode_oneshot);
+	        	} else if (rotationAngle >= 20 && rotationAngle < 45) {
+        			vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.01"), remoteApi.simx_opmode_oneshot);
+	        	} else if (rotationAngle > -70 && rotationAngle <= -45) {
+	        		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("-0.02"), remoteApi.simx_opmode_oneshot);
+	        	} else if (rotationAngle >= 45 && rotationAngle < 70) {
+	        		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.02"), remoteApi.simx_opmode_oneshot);
+	        	} else if (rotationAngle < -70) { 
+	        		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("-0.04"), remoteApi.simx_opmode_oneshot);
+	        	} else if (rotationAngle > 70) {
+	        		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.04"), remoteApi.simx_opmode_oneshot);
 	        	}
 	        	break;
 	        default :
