@@ -5,14 +5,16 @@ import android.hardware.SensorEvent;
 public class Accelerometer {
 
     // Parameter to determine how often the accelerometer sensor state is to be updated (in milliseconds)
-    private static final int UPDATE_FREQ = 200;
+    private static final int UPDATE_FREQ = 100;
 
     private SensorEvent event;
     private long lastUpdateTime;
+    private String selMode;
 
-    public Accelerometer(SensorEvent event, long lastUpdateTime) {
+    public Accelerometer(SensorEvent event, long lastUpdateTime, String selMode) {
         this.event = event;
         this.lastUpdateTime = lastUpdateTime;
+        this.selMode = selMode;
     }
 
     public int calculateRotation() {
@@ -31,8 +33,15 @@ public class Accelerometer {
             g[1] = (float) (g[1] / norm_Of_g);
             g[2] = (float) (g[2] / norm_Of_g);
 
-            // Rotation corresponds to the angle of rotaion about the x-y plane
-            inclination = (int) Math.round(Math.toDegrees(Math.atan2(g[0], g[2]))) * -1;
+            if (selMode.equals("Arm")) {
+                // Angle of rotation about x-z plane
+                inclination = (int) Math.round(Math.toDegrees(Math.atan2(g[0], g[2]))) * -1;
+            } else if (selMode.equals("Wrist")) {
+                // Angle of rotation about x-y plane
+                // Offset 45 degrees as the device is at 45 degrees inclination when lying flat on a table
+                inclination = (int) (Math.round(Math.toDegrees(Math.atan2(g[0], g[1]))) - 45) * -1;
+            }
+
             System.out.println("inclination = " + inclination);
         }
 

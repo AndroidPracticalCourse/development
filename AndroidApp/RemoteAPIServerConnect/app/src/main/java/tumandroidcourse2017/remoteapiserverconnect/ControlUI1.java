@@ -24,17 +24,14 @@ import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocke
 
 public class ControlUI1 extends Activity implements SensorEventListener {
 
-    private final String nameArm = "IRB140_joint2#0";
-    private final String nameWrist = "IRB140_joint5#0";
     private final String nameArmCamera = "Vision_sensor";
-    private String nameSelComponent = nameArm; // stores the name of the arm or wrist component, depending on the selected mode
+    private String selMode = "Arm"; // "Arm" or "Wrist"
 
     // Sensors and data
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
-    private Sensor mGravity;
     private boolean isSensorsStarted;
-    // Acccelerometer
+    // Accelerometer
     private int inclinationAngle;
     private long accelerometerLastUpdateTime = 0;
 
@@ -75,15 +72,15 @@ public class ControlUI1 extends Activity implements SensorEventListener {
         Button buttonToggleMode = (Button) findViewById(R.id.btn_toggleMode);
         buttonToggleMode.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) { // Toggles between arm and wrist mode; arm mode selected by default
-            TextView selMode = (TextView) findViewById(R.id.text_currModeSel);
-            if (nameSelComponent.equals(nameArm)) {
-                nameSelComponent = nameWrist;
-                selMode.setText(R.string.text_wrist);
-            } else if (nameSelComponent.equals(nameWrist)) {
-                nameSelComponent = nameArm;
-                selMode.setText(R.string.text_arm);
+            TextView currModeSel = (TextView) findViewById(R.id.text_currModeSel);
+            if (selMode.equals(getString(R.string.text_arm))) {
+                currModeSel.setText(R.string.text_wrist);
+                selMode = getString(R.string.text_wrist);
+            } else if (selMode.equals(getString(R.string.text_wrist))) {
+                currModeSel.setText(R.string.text_arm);
+                selMode = getString(R.string.text_arm);
             }
-            System.out.println("nameSelComponent = " + nameSelComponent);
+            System.out.println("selMode = " + selMode);
             }
         });
 
@@ -116,9 +113,6 @@ public class ControlUI1 extends Activity implements SensorEventListener {
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
             mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            mGravity = mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-            //mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-            //mRotation = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
             registerSensorListeners();
             Log.i(TAG, "Sensors started");
@@ -133,9 +127,6 @@ public class ControlUI1 extends Activity implements SensorEventListener {
 
     private void registerSensorListeners() {
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(this, mGravity, SensorManager.SENSOR_DELAY_NORMAL);
-        //mSensorManager.registerListener(this, mGyroscope, SensorManager.SENSOR_DELAY_NORMAL);
-        //mSensorManager.registerListener(this, mRotation, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     // =============================================================
@@ -150,11 +141,11 @@ public class ControlUI1 extends Activity implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
-                Accelerometer accelerometer = new Accelerometer(event, accelerometerLastUpdateTime);
+                Accelerometer accelerometer = new Accelerometer(event, accelerometerLastUpdateTime, selMode);
                 inclinationAngle = accelerometer.calculateRotation();
                 accelerometerLastUpdateTime = accelerometer.getLastUpdateTime();
 
-                sendSensorData(event.sensor.getType());
+                sendSensorData();
                 break;
 
             /*
@@ -193,22 +184,14 @@ public class ControlUI1 extends Activity implements SensorEventListener {
         }
     }
 
-    private void sendSensorData(int sensor) {
+    private void sendSensorData() {
         try {
             Socket clientSocket = getSocket();
             DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-
             outToServer.writeBytes(getString(R.string.msg_sensordata) + '\n');
-            outToServer.writeBytes(nameSelComponent + '\n');
 
-            switch (sensor) {
-                case Sensor.TYPE_ACCELEROMETER:
-                    outToServer.writeBytes("accelerometer" + '\n');
-                    outToServer.writeBytes(inclinationAngle + "" + '\n');
-                    break;
-                default :
-                    break;
-            }
+            outToServer.writeBytes(selMode + "" + '\n');
+            outToServer.writeBytes(inclinationAngle + "" + '\n');
 
         } catch (IOException e) {
             e.printStackTrace();

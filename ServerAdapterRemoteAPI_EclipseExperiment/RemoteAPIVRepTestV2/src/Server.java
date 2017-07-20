@@ -70,36 +70,38 @@ public class Server implements Runnable {
     }
 
     private void receiveSensorData(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException {
-        String nameSelComponent = inFromClient.readLine();
-        String sensorType = inFromClient.readLine();
-		
-        // Obtains the handle of the selected component based on its name
-		IntW handleSelComponent = new IntW(1);
-        vrep.simxGetObjectHandle(clientID, nameSelComponent, handleSelComponent, remoteApi.simx_opmode_blocking);
+    	String selMode = inFromClient.readLine();
+    	String signal = "rotate";
 
-        switch (sensorType) {
-        	case "accelerometer" :
-		        int rotationAngle = Integer.parseInt(inFromClient.readLine());
-		        System.out.println("rotationAngle = " + rotationAngle);
-		        if (rotationAngle > -20 && rotationAngle < 20) {
-	        		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.0"), remoteApi.simx_opmode_oneshot);
-	        	} else if (rotationAngle > -45 && rotationAngle <= -20) {
-	        		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("-0.01"), remoteApi.simx_opmode_oneshot);
-	        	} else if (rotationAngle >= 20 && rotationAngle < 45) {
-        			vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.01"), remoteApi.simx_opmode_oneshot);
-	        	} else if (rotationAngle > -70 && rotationAngle <= -45) {
-	        		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("-0.02"), remoteApi.simx_opmode_oneshot);
-	        	} else if (rotationAngle >= 45 && rotationAngle < 70) {
-	        		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.02"), remoteApi.simx_opmode_oneshot);
-	        	} else if (rotationAngle < -70) { 
-	        		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("-0.04"), remoteApi.simx_opmode_oneshot);
-	        	} else if (rotationAngle > 70) {
-	        		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.04"), remoteApi.simx_opmode_oneshot);
-	        	}
-	        	break;
-	        default :
-	        	break;
-        }
+    	// if the signal changes, the other signal has to be stopped
+    	if (selMode.equals("Arm")) {
+    		if (!signal.equals("rotate")) {
+    			vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("0.0"), remoteApi.simx_opmode_oneshot);
+    		}
+    		signal = "rotate";
+    	} else if (selMode.equals("Wrist")) {
+    		if (!signal.equals("moveUpDown")) {
+    			vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.0"), remoteApi.simx_opmode_oneshot);
+    		}
+    		signal = "moveUpDown";
+    	}
+
+        int inclinationAngle = Integer.parseInt(inFromClient.readLine());
+        System.out.println("signal = " + signal + ", inclinationAngle = " + inclinationAngle);
+        if (inclinationAngle > -20 && inclinationAngle < 20) {
+    		vrep.simxSetFloatSignal(clientID, signal, Float.valueOf("0.0"), remoteApi.simx_opmode_oneshot);
+    	} else if (inclinationAngle > -45 && inclinationAngle <= -20) {
+    		vrep.simxSetFloatSignal(clientID, signal, Float.valueOf("-0.005"), remoteApi.simx_opmode_oneshot);
+    	} else if (inclinationAngle >= 20 && inclinationAngle < 45) {
+			vrep.simxSetFloatSignal(clientID, signal, Float.valueOf("0.05"), remoteApi.simx_opmode_oneshot);
+    	} else if (inclinationAngle > -70 && inclinationAngle <= -45) {
+    		vrep.simxSetFloatSignal(clientID, signal, Float.valueOf("-0.01"), remoteApi.simx_opmode_oneshot);
+    	} else if (inclinationAngle >= 45 && inclinationAngle < 70) {
+    		vrep.simxSetFloatSignal(clientID, signal, Float.valueOf("0.01"), remoteApi.simx_opmode_oneshot);
+    	} else if (inclinationAngle < -70) { 
+    		vrep.simxSetFloatSignal(clientID, signal, Float.valueOf("-0.02"), remoteApi.simx_opmode_oneshot);
+    	} else if (inclinationAngle > 70) {
+    		vrep.simxSetFloatSignal(clientID, signal, Float.valueOf("0.02"), remoteApi.simx_opmode_oneshot);
+    	}
     }
-
 }
