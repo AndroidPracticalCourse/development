@@ -6,6 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +23,7 @@ import tumandroidcourse2017.remoteapiserverconnect.sensors.Accelerometer;
 
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocket;
 
-public class ControlUI1 extends Activity implements SensorEventListener {
+public class ControlUI1 extends AppCompatActivity implements SensorEventListener {
 
     private final String nameArmCamera = "Vision_sensor";
     private String selMode = "Arm"; // "Arm" or "Wrist"

@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.StrictMode;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +20,7 @@ import java.util.regex.Pattern;
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocket;
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.setSocket;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     private static final Pattern PATTERN = Pattern.compile(
             "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
@@ -37,6 +40,15 @@ public class MainActivity extends Activity {
             //your codes here
 
         }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.global_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        return super.onOptionsItemSelected(item);
     }
 
     private void initWidgets(){

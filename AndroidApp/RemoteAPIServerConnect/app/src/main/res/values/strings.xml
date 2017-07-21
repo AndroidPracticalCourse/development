@@ -32,5 +32,6 @@
 
     <string name="msg_simulation">SIMULATION</string>
     <string name="msg_sensordata">SENSORDATA</string>
+    <string name="title_activity_about_ui">AboutUI</string>
 
 </resources>
