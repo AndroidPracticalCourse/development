@@ -48,7 +48,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
-        return super.onOptionsItemSelected(item);
+        int id = item.getItemId();
+        switch (id){
+            case R.id.aboutMenu:
+                Intent aboutui = new Intent(this, AboutUI.class);
+                startActivity(aboutui);
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     private void initWidgets(){

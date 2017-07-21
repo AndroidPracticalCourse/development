@@ -24,6 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ControlUI1" />
+        <activity android:name=".AboutUI"></activity>
     </application>
 
 </manifest>
