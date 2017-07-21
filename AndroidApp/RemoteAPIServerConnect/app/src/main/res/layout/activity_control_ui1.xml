@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="tumandroidcourse2017.remoteapiserverconnect.ControlUI1">
+
+    <TextView
+        android:id="@+id/textView_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:text="@string/text_serverInfo" />
+
+    <TextView
+        android:id="@+id/text_currMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:text="@string/text_currMode"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/text_currModeSel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_currMode"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:text="@string/text_arm"
+        android:textColor="@android:color/black"
+        android:textSize="60sp"/>
+
+    <Button
+        android:id="@+id/btn_toggleMode"
+        android:layout_width="100dp"
+        android:layout_height="70dp"
+        android:text="@string/text_toggle"
+        android:layout_below="@+id/text_currModeSel"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+
+    <!--
+    <Button
+        android:id="@+id/btn_claw"
+        android:layout_width="180dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="59dp"
+        android:text="@string/str_pickupdrop"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+     -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textView_info"
+        android:layout_alignStart="@id/textView_info"
+        android:layout_alignLeft="@id/textView_info"
+        android:layout_marginTop="300dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_start"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingRight="20dp"
+            android:text="@string/text_startSimulation" />
+
+        <Button
+            android:id="@+id/button_pause"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingRight="20dp"
+            android:text="@string/text_pauseSimulation" />
+
+        <Button
+            android:id="@+id/button_stop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingRight="20dp"
+            android:text="@string/text_stopSimulation" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>
