@@ -15,8 +15,11 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -34,6 +37,8 @@ public class ControlUI1 extends AppCompatActivity implements SensorEventListener
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private boolean isSensorsStarted;
+    private boolean isSensorControlEnabled;
+    private boolean sentZeroMovementDataToStopRobotArmMovement=false;
     // Accelerometer
     private int tiltLeftRight;
     private int tiltUpDown;
@@ -41,6 +46,9 @@ public class ControlUI1 extends AppCompatActivity implements SensorEventListener
 
     // Logging
     private static final String TAG = ControlUI1.class.getSimpleName();
+
+    // Widgets
+    private TextView TiltData_Text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +115,73 @@ public class ControlUI1 extends AppCompatActivity implements SensorEventListener
                 return false;
             }
         });
+        ToggleButton toggleSensorControl = (ToggleButton) findViewById(R.id.toggleSensorControl);
+        toggleSensorControl.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                               if (isChecked) {
+                                                                   isSensorControlEnabled = true;
+                                                               } else {
+                                                                   isSensorControlEnabled = false;
+                                                               }
+                                                           }
+                                                       });
+        TiltData_Text = (TextView) findViewById(R.id.TiltData_Text);
+        ImageButton control_left = (ImageButton) findViewById(R.id.control_left);
+        ImageButton control_up = (ImageButton) findViewById(R.id.control_up);
+        ImageButton control_right = (ImageButton) findViewById(R.id.control_right);
+        ImageButton control_down = (ImageButton) findViewById(R.id.control_down);
+        control_left.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    sendMovementDataViaButton("L");
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP){
+                    sendMovementDataViaButton("STOP");
+                }
+
+                return false;
+            }
+        });
+        control_up.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    sendMovementDataViaButton("U");
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP){
+                    sendMovementDataViaButton("STOP");
+                }
+
+                return false;
+            }
+        });
+        control_right.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    sendMovementDataViaButton("R");
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP){
+                    sendMovementDataViaButton("STOP");
+                }
+
+                return false;
+            }
+        });
+        control_down.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    sendMovementDataViaButton("D");
+                }
+                else if (event.getAction() == MotionEvent.ACTION_UP){
+                    sendMovementDataViaButton("STOP");
+                }
+
+                return false;
+            }
+        });
 
     }
 
@@ -170,8 +245,30 @@ public class ControlUI1 extends AppCompatActivity implements SensorEventListener
                 tiltLeftRight = accelerometer.getTiltLeftRight();
                 tiltUpDown = accelerometer.getTiltUpDown();
                 accelerometerLastUpdateTime = accelerometer.getLastUpdateTime();
+                if(tiltLeftRight!=0 && tiltUpDown!=0){
+                    TiltData_Text.setText("tiltLeftRight:"+tiltLeftRight+" tiltUpDown:"+tiltUpDown);
+                    if(isSensorControlEnabled){
+                        sendMovementData();
+                    }
+                    else{
+                        if(!sentZeroMovementDataToStopRobotArmMovement){
+                            try {
+                                Socket clientSocket = getSocket();
+                                DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+                                outToServer.writeBytes(getString(R.string.msg_movementdata) + '\n');
 
-                sendMovementData();
+                                outToServer.writeBytes(0 + "" + '\n');
+                                outToServer.writeBytes(0 + "" + '\n');
+                                sentZeroMovementDataToStopRobotArmMovement = true;
+                            }
+                            catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                }
+
                 break;
             default:
                 break;
@@ -205,9 +302,22 @@ public class ControlUI1 extends AppCompatActivity implements SensorEventListener
 
             outToServer.writeBytes(tiltLeftRight + "" + '\n');
             outToServer.writeBytes(tiltUpDown + "" + '\n');
-
+            sentZeroMovementDataToStopRobotArmMovement=false;
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void sendMovementDataViaButton(String direction) {
+        if(!isSensorControlEnabled){
+            try {
+                Socket clientSocket = getSocket();
+                DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+                outToServer.writeBytes(getString(R.string.msg_movementdataviabutton) + '\n');
+                outToServer.writeBytes(direction + '\n');
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
