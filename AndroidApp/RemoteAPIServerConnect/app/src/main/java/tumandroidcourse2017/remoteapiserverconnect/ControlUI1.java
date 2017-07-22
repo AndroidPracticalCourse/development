@@ -6,8 +6,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -23,17 +23,15 @@ import tumandroidcourse2017.remoteapiserverconnect.sensors.Accelerometer;
 
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocket;
 
-public class ControlUI1 extends AppCompatActivity implements SensorEventListener {
-
-    private final String nameArmCamera = "Vision_sensor";
-    private String selMode = "Arm"; // "Arm" or "Wrist"
+public class ControlUI1 extends Activity implements SensorEventListener {
 
     // Sensors and data
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private boolean isSensorsStarted;
     // Accelerometer
-    private int inclinationAngle;
+    private int tiltLeftRight;
+    private int tiltUpDown;
     private long accelerometerLastUpdateTime = 0;
 
     // Logging
@@ -70,22 +68,24 @@ public class ControlUI1 extends AppCompatActivity implements SensorEventListener
             }
         });
 
-        Button buttonToggleMode = (Button) findViewById(R.id.btn_toggleMode);
-        buttonToggleMode.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) { // Toggles between arm and wrist mode; arm mode selected by default
-            TextView currModeSel = (TextView) findViewById(R.id.text_currModeSel);
-            if (selMode.equals(getString(R.string.text_arm))) {
-                currModeSel.setText(R.string.text_wrist);
-                selMode = getString(R.string.text_wrist);
-            } else if (selMode.equals(getString(R.string.text_wrist))) {
-                currModeSel.setText(R.string.text_arm);
-                selMode = getString(R.string.text_arm);
-            }
-            System.out.println("selMode = " + selMode);
+        Button buttonToggleGripper = (Button) findViewById(R.id.btn_toggleGripper);
+        buttonToggleGripper.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        sendGripperData(1);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        sendGripperData(0);
+                        break;
+                    default:
+                        break;
+                }
+                return false;
             }
         });
 
-        // Button buttonClaw = (Button) findViewById(R.id.btn_claw);
     }
 
     // =============================================================
@@ -142,25 +142,15 @@ public class ControlUI1 extends AppCompatActivity implements SensorEventListener
     public void onSensorChanged(SensorEvent event) {
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
-                Accelerometer accelerometer = new Accelerometer(event, accelerometerLastUpdateTime, selMode);
-                inclinationAngle = accelerometer.calculateRotation();
+                Accelerometer accelerometer = new Accelerometer(event, accelerometerLastUpdateTime);
+                accelerometer.calculateRotation();
+
+                tiltLeftRight = accelerometer.getTiltLeftRight();
+                tiltUpDown = accelerometer.getTiltUpDown();
                 accelerometerLastUpdateTime = accelerometer.getLastUpdateTime();
 
-                sendSensorData();
+                sendMovementData();
                 break;
-
-            /*
-            case Sensor.TYPE_GYROSCOPE :
-                Gyroscope gyroscope = new Gyroscope(event);
-                float[] gyroscopeValues = gyroscope.update();
-                rollAngle = gyroscopeValues[0];
-                pitchAngle = gyroscopeValues[1];
-                break;
-            case Sensor.TYPE_ROTATION_VECTOR :
-                RotationVector rotation = new RotationVector(event);
-                rotationVector = rotation.update();
-                break;
-                */
             default:
                 break;
         }
@@ -185,15 +175,27 @@ public class ControlUI1 extends AppCompatActivity implements SensorEventListener
         }
     }
 
-    private void sendSensorData() {
+    private void sendMovementData() {
         try {
             Socket clientSocket = getSocket();
             DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-            outToServer.writeBytes(getString(R.string.msg_sensordata) + '\n');
+            outToServer.writeBytes(getString(R.string.msg_movementdata) + '\n');
 
-            outToServer.writeBytes(selMode + "" + '\n');
-            outToServer.writeBytes(inclinationAngle + "" + '\n');
+            outToServer.writeBytes(tiltLeftRight + "" + '\n');
+            outToServer.writeBytes(tiltUpDown + "" + '\n');
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendGripperData(int gripperStatus) {
+        try {
+            Socket clientSocket = getSocket();
+            DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+            outToServer.writeBytes(getString(R.string.msg_gripperdata) + '\n');
+
+            outToServer.writeBytes(gripperStatus + "" + '\n');
         } catch (IOException e) {
             e.printStackTrace();
         }

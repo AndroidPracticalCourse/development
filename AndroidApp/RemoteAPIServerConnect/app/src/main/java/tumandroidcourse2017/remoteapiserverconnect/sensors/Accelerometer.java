@@ -9,18 +9,18 @@ public class Accelerometer {
 
     private SensorEvent event;
     private long lastUpdateTime;
-    private String selMode;
 
-    public Accelerometer(SensorEvent event, long lastUpdateTime, String selMode) {
+    int tiltLeftRight = 0;
+    int tiltUpDown = 0;
+
+    public Accelerometer(SensorEvent event, long lastUpdateTime) {
         this.event = event;
         this.lastUpdateTime = lastUpdateTime;
-        this.selMode = selMode;
     }
 
-    public int calculateRotation() {
+    public void calculateRotation() {
         long currentTime = System.currentTimeMillis();
         long interval = currentTime - lastUpdateTime;
-        int inclination = 0;
 
         if (interval > UPDATE_FREQ) {
             lastUpdateTime = currentTime;
@@ -33,19 +33,10 @@ public class Accelerometer {
             g[1] = (float) (g[1] / norm_Of_g);
             g[2] = (float) (g[2] / norm_Of_g);
 
-            if (selMode.equals("Arm")) {
-                // Angle of rotation about x-z plane
-                inclination = (int) Math.round(Math.toDegrees(Math.atan2(g[0], g[2]))) * -1;
-            } else if (selMode.equals("Wrist")) {
-                // Angle of rotation about x-y plane
-                // Offset 45 degrees as the device is at 45 degrees inclination when lying flat on a table
-                inclination = (int) (Math.round(Math.toDegrees(Math.atan2(g[0], g[1]))) - 45) * -1;
-            }
-
-            System.out.println("inclination = " + inclination);
+            tiltLeftRight = (int) Math.round(Math.toDegrees(Math.atan2(g[0], g[2])));
+            tiltUpDown = (int) (Math.round(Math.toDegrees(Math.atan2(g[1], g[2]))));
+            System.out.println("interval = " + interval + ", tiltLeftRight = " + tiltLeftRight + ", tiltUpDown = " + tiltUpDown);
         }
-
-        return inclination;
     }
 
     /*
@@ -87,6 +78,14 @@ public class Accelerometer {
 
     public long getLastUpdateTime() {
         return lastUpdateTime;
+    }
+
+    public int getTiltLeftRight() {
+        return tiltLeftRight;
+    }
+
+    public int getTiltUpDown() {
+        return tiltUpDown;
     }
 
 }

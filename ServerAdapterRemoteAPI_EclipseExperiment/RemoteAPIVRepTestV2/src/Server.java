@@ -4,6 +4,12 @@ import java.net.*;
 
 public class Server implements Runnable {
 
+    private static final String MSG_REMOTEAPI_CONNECTACCEPT = "REMOTEAPI_CONNECTACCEPT";
+    private static final String MSG_REMOTEAPI_CONNECTREQ = "REMOTEAPI_CONNECTREQ";
+    private static final String MSG_SIMULATION = "SIMULATION";
+    private static final String MSG_MOVEMENTDATA = "MOVEMENTDATA";
+    private static final String MSG_GRIPPERDATA = "GRIPPERDATA";
+
 	private remoteApi vrep;
 	private int clientID;
 
@@ -25,13 +31,15 @@ public class Server implements Runnable {
 
 			while (true) {
 			  	String receivedBuffer = inFromClient.readLine();
-			  	if (receivedBuffer.equals("REMOTEAPI_CONNECTREQ")) { // initial connection setup
+			  	if (receivedBuffer.equals(MSG_REMOTEAPI_CONNECTREQ)) { // initial connection setup
                     acceptConnectionRequest(outToClient);
-			  	} else if (receivedBuffer.equals("SIMULATION")) { // commands to start/pause/stop simulation
+			  	} else if (receivedBuffer.equals(MSG_SIMULATION)) { // commands to start/pause/stop simulation
 					modifySimulation(inFromClient, outToClient);
-			  	} else if (receivedBuffer.equals("SENSORDATA")) { // receive sensor data from Android device and send to the robot
-                    receiveSensorData(inFromClient, outToClient);
-                }
+			  	} else if (receivedBuffer.equals(MSG_MOVEMENTDATA)) { // receive sensor data from Android device and send to the robot
+                    receiveMovementData(inFromClient, outToClient);
+                } else if (receivedBuffer.equals(MSG_GRIPPERDATA)) { // receive data to control the gripper
+                    receiveGripperData(inFromClient, outToClient);
+                }            
             }
 		} catch (IOException e ) {
 			//e.printStackTrace();
@@ -42,7 +50,7 @@ public class Server implements Runnable {
 
 	private void acceptConnectionRequest(DataOutputStream outToClient) throws IOException {
         System.out.println("Incoming connection accepted");
-        outToClient.writeBytes("REMOTEAPI_CONNECTACCEPT\n");
+        outToClient.writeBytes(MSG_REMOTEAPI_CONNECTACCEPT + '\n');
         outToClient.writeBytes(clientID + "" + '\n');
     }
 
@@ -69,39 +77,57 @@ public class Server implements Runnable {
         }
     }
 
-    private void receiveSensorData(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException {
-    	String selMode = inFromClient.readLine();
-    	String signal = "rotate";
+    private void receiveMovementData(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException {
+    	int tiltLeftRight = Integer.parseInt(inFromClient.readLine());
+        int tiltUpDown = Integer.parseInt(inFromClient.readLine());
+        System.out.println("tiltLeftRight = " + tiltLeftRight + ", tiltUpDown = " + tiltUpDown);
 
-    	// if the signal changes, the other signal has to be stopped
-    	if (selMode.equals("Arm")) {
-    		if (!signal.equals("rotate")) {
-    			vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("0.0"), remoteApi.simx_opmode_oneshot);
-    		}
-    		signal = "rotate";
-    	} else if (selMode.equals("Wrist")) {
-    		if (!signal.equals("moveUpDown")) {
-    			vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.0"), remoteApi.simx_opmode_oneshot);
-    		}
-    		signal = "moveUpDown";
-    	}
+        // Configurable threshold values to adjust the velocity scale
+        int threshold1 = 15;
+        int threshold2 = 35;
+        int threshold3 = 55;
 
-        int inclinationAngle = Integer.parseInt(inFromClient.readLine());
-        System.out.println("signal = " + signal + ", inclinationAngle = " + inclinationAngle);
-        if (inclinationAngle > -20 && inclinationAngle < 20) {
-    		vrep.simxSetFloatSignal(clientID, signal, Float.valueOf("0.0"), remoteApi.simx_opmode_oneshot);
-    	} else if (inclinationAngle > -45 && inclinationAngle <= -20) {
-    		vrep.simxSetFloatSignal(clientID, signal, Float.valueOf("-0.005"), remoteApi.simx_opmode_oneshot);
-    	} else if (inclinationAngle >= 20 && inclinationAngle < 45) {
-			vrep.simxSetFloatSignal(clientID, signal, Float.valueOf("0.05"), remoteApi.simx_opmode_oneshot);
-    	} else if (inclinationAngle > -70 && inclinationAngle <= -45) {
-    		vrep.simxSetFloatSignal(clientID, signal, Float.valueOf("-0.01"), remoteApi.simx_opmode_oneshot);
-    	} else if (inclinationAngle >= 45 && inclinationAngle < 70) {
-    		vrep.simxSetFloatSignal(clientID, signal, Float.valueOf("0.01"), remoteApi.simx_opmode_oneshot);
-    	} else if (inclinationAngle < -70) { 
-    		vrep.simxSetFloatSignal(clientID, signal, Float.valueOf("-0.02"), remoteApi.simx_opmode_oneshot);
-    	} else if (inclinationAngle > 70) {
-    		vrep.simxSetFloatSignal(clientID, signal, Float.valueOf("0.02"), remoteApi.simx_opmode_oneshot);
-    	}
+        // Control left/right
+        if (tiltLeftRight > (threshold1 * -1) && tiltLeftRight < threshold1) {
+            vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.0"), remoteApi.simx_opmode_oneshot);
+        } else if (tiltLeftRight > (threshold2 * -1) && tiltLeftRight <= (threshold1 * -1)) {
+            vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("-0.01"), remoteApi.simx_opmode_oneshot);
+        } else if (tiltLeftRight >= threshold1 && tiltLeftRight < threshold2) {
+            vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.01"), remoteApi.simx_opmode_oneshot);
+        } else if (tiltLeftRight > (threshold3 * -1) && tiltLeftRight <= (threshold2 * -1)) {
+            vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("-0.02"), remoteApi.simx_opmode_oneshot);
+        } else if (tiltLeftRight >= threshold2 && tiltLeftRight < threshold3) {
+            vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.02"), remoteApi.simx_opmode_oneshot);
+        } else if (tiltLeftRight <= (threshold3 * -1)) { 
+            vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("-0.04"), remoteApi.simx_opmode_oneshot);
+        } else if (tiltLeftRight >= threshold3) {
+            vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.04"), remoteApi.simx_opmode_oneshot);
+        }
+
+        // Control up/down
+        // Threshold for downward movement is divided by 2 to cater for the typical range of device movement of a user holding the device
+        // Upward movement: 0 to 90 degrees, downward movement: 0 to -45 degrees
+        if (tiltUpDown > (threshold1 * -1) && tiltUpDown < threshold1) {
+            vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("0.0"), remoteApi.simx_opmode_oneshot);
+        } else if (tiltUpDown > ((threshold2 * -1) / 2) && tiltUpDown <= ((threshold1 * -1) / 2)) {
+            vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("-0.01"), remoteApi.simx_opmode_oneshot);
+        } else if (tiltUpDown >= threshold1 && tiltUpDown < threshold2) {
+            vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("0.01"), remoteApi.simx_opmode_oneshot);
+        } else if (tiltUpDown > ((threshold3 * -1) / 2) && tiltUpDown <= ((threshold2 * -1) / 2)) {
+            vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("-0.02"), remoteApi.simx_opmode_oneshot);
+        } else if (tiltUpDown >= threshold2 && tiltUpDown < threshold3) {
+            vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("0.02"), remoteApi.simx_opmode_oneshot);
+        } else if (tiltUpDown <= ((threshold3 * -1) / 2)) { 
+            vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("-0.03"), remoteApi.simx_opmode_oneshot);
+        } else if (tiltUpDown >= threshold3) {
+            vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("0.03"), remoteApi.simx_opmode_oneshot);
+        }
     }
+
+    private void receiveGripperData(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException {
+        int gripperStatus = Integer.parseInt(inFromClient.readLine());
+        // 0 for opening, 1 for closing
+        vrep.simxSetIntegerSignal(clientID, "closeGripper", gripperStatus, remoteApi.simx_opmode_oneshot);
+    }
+
 }
