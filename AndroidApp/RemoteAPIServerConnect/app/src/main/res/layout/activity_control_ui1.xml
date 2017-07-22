@@ -14,49 +14,142 @@
         android:layout_marginStart="16dp"
         android:text="@string/text_serverInfo" />
 
+    <ToggleButton
+        android:id="@+id/toggleSensorControl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView_info"
+        android:layout_alignStart="@+id/textView_info"
+        android:layout_below="@+id/textView_info"
+        android:layout_marginTop="12dp"
+        android:checked="false"
+        android:text="ToggleButton"
+        android:textOff="Sensor Control OFF | Button Control ON"
+        android:textOn="Sensor Control ON | Button Control OFF" />
+
+    <TextView
+        android:id="@+id/GripTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hold to Grab"
+        android:visibility="visible"
+        android:layout_alignBottom="@+id/control_right"
+        android:layout_alignLeft="@+id/btn_toggleGripper"
+        android:layout_alignStart="@+id/btn_toggleGripper" />
+
     <Button
         android:id="@+id/btn_toggleGripper"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="250dp"
-        android:background="@drawable/round_button"
+        android:background="@drawable/grip_button"
         android:gravity="center_vertical|center_horizontal"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/button_pause"
+        android:layout_toEndOf="@+id/button_pause"
+        android:layout_marginLeft="21dp"
+        android:layout_marginStart="21dp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/button_start"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textView_info"
-        android:layout_alignStart="@id/textView_info"
-        android:layout_alignLeft="@id/textView_info"
-        android:layout_marginTop="450dp"
-        android:orientation="horizontal">
+        android:layout_alignLeft="@+id/textView10"
+        android:layout_alignStart="@+id/textView10"
+        android:layout_below="@+id/textView10"
+        android:layout_marginTop="11dp"
+        android:layout_weight="1"
+        android:paddingRight="20dp"
+        android:text="@string/text_startSimulation"
+        android:textSize="14sp" />
 
-        <Button
-            android:id="@+id/button_start"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingRight="20dp"
-            android:text="@string/text_startSimulation" />
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Simulation"
+        android:layout_marginTop="11dp"
+        android:layout_below="@+id/toggleSensorControl"
+        android:layout_alignLeft="@+id/toggleSensorControl"
+        android:layout_alignStart="@+id/toggleSensorControl" />
 
-        <Button
-            android:id="@+id/button_pause"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingRight="20dp"
-            android:text="@string/text_pauseSimulation" />
+    <Button
+        android:id="@+id/button_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/button_start"
+        android:layout_toEndOf="@+id/button_start"
+        android:layout_toRightOf="@+id/button_start"
+        android:layout_weight="1"
+        android:paddingRight="20dp"
+        android:text="@string/text_pauseSimulation" />
 
-        <Button
-            android:id="@+id/button_stop"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingRight="20dp"
-            android:text="@string/text_stopSimulation" />
+    <Button
+        android:id="@+id/button_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingRight="20dp"
+        android:text="@string/text_stopSimulation"
+        android:layout_alignBaseline="@+id/button_pause"
+        android:layout_alignBottom="@+id/button_pause"
+        android:layout_toRightOf="@+id/button_pause"
+        android:layout_toEndOf="@+id/button_pause" />
 
-    </LinearLayout>
+    <ImageButton
+        android:id="@+id/control_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/GripTextView"
+        android:layout_alignLeft="@+id/button_start"
+        android:layout_alignStart="@+id/button_start"
+        app:srcCompat="@drawable/arrow_left" />
+
+    <ImageButton
+        android:id="@+id/control_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/control_left"
+        android:layout_toRightOf="@+id/control_left"
+        app:srcCompat="@drawable/arrow_up" />
+
+    <ImageButton
+        android:id="@+id/control_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/control_left"
+        android:layout_toEndOf="@+id/control_left"
+        android:layout_toRightOf="@+id/control_left"
+        app:srcCompat="@drawable/arrow_down" />
+
+    <ImageButton
+        android:id="@+id/control_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/control_up"
+        android:layout_toEndOf="@+id/control_up"
+        android:layout_toRightOf="@+id/control_up"
+        app:srcCompat="@drawable/arrow_right" />
+
+    <TextView
+        android:id="@+id/textCiew_color"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/control_left"
+        android:layout_alignStart="@+id/control_left"
+        android:layout_below="@+id/control_right"
+        android:layout_marginTop="21dp"
+        android:text="Detected color is" />
+
+    <TextView
+        android:id="@+id/TiltData_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textCiew_color"
+        android:layout_alignStart="@+id/textCiew_color"
+        android:layout_below="@+id/textCiew_color"
+        android:layout_marginTop="12dp"
+        android:text="TiltData" />
 
 
 </RelativeLayout>

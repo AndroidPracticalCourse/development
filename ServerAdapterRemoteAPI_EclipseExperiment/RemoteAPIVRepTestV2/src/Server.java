@@ -9,6 +9,7 @@ public class Server implements Runnable {
     private static final String MSG_SIMULATION = "SIMULATION";
     private static final String MSG_MOVEMENTDATA = "MOVEMENTDATA";
     private static final String MSG_GRIPPERDATA = "GRIPPERDATA";
+    private static final String MSG_MOVEMENTDATAVIABUTTON = "MOVEMENTDATAVIABUTTON";
 
 	private remoteApi vrep;
 	private int clientID;
@@ -39,7 +40,9 @@ public class Server implements Runnable {
                     receiveMovementData(inFromClient, outToClient);
                 } else if (receivedBuffer.equals(MSG_GRIPPERDATA)) { // receive data to control the gripper
                     receiveGripperData(inFromClient, outToClient);
-                }            
+                } else if (receivedBuffer.equals(MSG_MOVEMENTDATAVIABUTTON)) { // receive data to control the gripper
+                    receiveMovementDataViaButton(inFromClient, outToClient);
+                }           
             }
 		} catch (IOException e ) {
 			//e.printStackTrace();
@@ -128,6 +131,27 @@ public class Server implements Runnable {
         int gripperStatus = Integer.parseInt(inFromClient.readLine());
         // 0 for opening, 1 for closing
         vrep.simxSetIntegerSignal(clientID, "closeGripper", gripperStatus, remoteApi.simx_opmode_oneshot);
+    }
+    
+    private void receiveMovementDataViaButton(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException{
+    	String command = inFromClient.readLine();
+    	System.out.println(command);
+    	if(command.equals("L")){
+    		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("-0.02"), remoteApi.simx_opmode_oneshot);
+    	}
+    	else if(command.equals("R")){
+    		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.02"), remoteApi.simx_opmode_oneshot);
+    	}
+    	else if(command.equals("U")){
+    		vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("0.02"), remoteApi.simx_opmode_oneshot);
+    	}
+    	else if(command.equals("D")){
+    		vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("-0.02"), remoteApi.simx_opmode_oneshot);
+    	}
+    	else if(command.equals("STOP")){
+    		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0"), remoteApi.simx_opmode_oneshot);
+    		vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("0"), remoteApi.simx_opmode_oneshot);
+    	}
     }
 
 }

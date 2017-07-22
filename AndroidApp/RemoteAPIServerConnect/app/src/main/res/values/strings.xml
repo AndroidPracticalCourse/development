@@ -26,12 +26,13 @@
     <string name="text_arm">Arm</string>
     <string name="text_wrist">Wrist</string>
     <string name="text_toggle">Toggle</string>
-    <string name="text_startSimulation">Start Simulation</string>
-    <string name="text_pauseSimulation">Pause Simulation</string>
-    <string name="text_stopSimulation">Stop Simulation</string>
+    <string name="text_startSimulation">Start</string>
+    <string name="text_pauseSimulation">Pause</string>
+    <string name="text_stopSimulation">Stop</string>
 
     <string name="msg_simulation">SIMULATION</string>
     <string name="msg_movementdata">MOVEMENTDATA</string>
+    <string name="msg_movementdataviabutton">MOVEMENTDATAVIABUTTON</string>
     <string name="msg_gripperdata">GRIPPERDATA</string>
     <string name="title_activity_about_ui">AboutUI</string>
 
