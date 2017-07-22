@@ -1,12 +1,17 @@
 package tumandroidcourse2017.remoteapiserverconnect;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -23,7 +28,7 @@ import tumandroidcourse2017.remoteapiserverconnect.sensors.Accelerometer;
 
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocket;
 
-public class ControlUI1 extends Activity implements SensorEventListener {
+public class ControlUI1 extends AppCompatActivity implements SensorEventListener {
 
     // Sensors and data
     private SensorManager mSensorManager;
@@ -41,9 +46,26 @@ public class ControlUI1 extends Activity implements SensorEventListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control_ui1);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         initWidgets();
         startSensors();
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.global_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+        switch (id){
+            case R.id.aboutMenu:
+                Intent aboutui = new Intent(this, AboutUI.class);
+                startActivity(aboutui);
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     private void initWidgets(){
