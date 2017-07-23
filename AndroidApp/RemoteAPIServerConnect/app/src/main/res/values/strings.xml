@@ -3,7 +3,10 @@
 
     <!-- MainActivity -->
 
-    <string name="text_tooltip">Make sure that you have opened both Server Adapter and V-REP with the scene file loaded first.</string>
+    <string name="text_vrep">V-REP</string>
+    <string name="text_controller">CONTROLLER</string>
+
+    <string name="text_tooltip">Ensure that the Server Adapter and V-REP with the loaded scene file are open.</string>
     <string name="text_ip">IP Address</string>
     <string name="input_ip">192.168.137.1</string>
     <string name="text_port">Port</string>
@@ -18,7 +21,7 @@
     <string name="toast_cantConnectError">Error! Cannot Connect.</string>
     <string name="toast_invalidIPFormat">Invalid IP format</string>
 
-    <!-- ControlUI1 -->
+    <!-- ControlActivity -->
 
     <string name="text_serverInfo">IP and Port of server</string>
     <string name="text_connectedTo">Connected to</string>

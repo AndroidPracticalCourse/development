@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="tumandroidcourse2017.remoteapiserverconnect.ControlUI1">
+    tools:context="tumandroidcourse2017.remoteapiserverconnect.ControlActivity">
 
     <TextView
         android:id="@+id/textView_info"

@@ -1,6 +1,5 @@
 package tumandroidcourse2017.remoteapiserverconnect;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.Sensor;
@@ -31,7 +30,7 @@ import tumandroidcourse2017.remoteapiserverconnect.sensors.Accelerometer;
 
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocket;
 
-public class ControlUI1 extends AppCompatActivity implements SensorEventListener {
+public class ControlActivity extends AppCompatActivity implements SensorEventListener {
 
     // Sensors and data
     private SensorManager mSensorManager;
@@ -45,7 +44,7 @@ public class ControlUI1 extends AppCompatActivity implements SensorEventListener
     private long accelerometerLastUpdateTime = 0;
 
     // Logging
-    private static final String TAG = ControlUI1.class.getSimpleName();
+    private static final String TAG = ControlActivity.class.getSimpleName();
 
     // Widgets
     private TextView TiltData_Text;
@@ -68,7 +67,7 @@ public class ControlUI1 extends AppCompatActivity implements SensorEventListener
         int id = item.getItemId();
         switch (id){
             case R.id.aboutMenu:
-                Intent aboutui = new Intent(this, AboutUI.class);
+                Intent aboutui = new Intent(this, AboutActivity.class);
                 startActivity(aboutui);
             default:
                 return super.onOptionsItemSelected(item);
@@ -288,7 +287,7 @@ public class ControlUI1 extends AppCompatActivity implements SensorEventListener
 
             outToServer.writeBytes(getString(R.string.msg_simulation) + '\n');
             outToServer.writeBytes(userInput + "" + '\n');
-            Toast.makeText(ControlUI1.this, "FROM SERVER: " + inFromServer.readLine(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(ControlActivity.this, "FROM SERVER: " + inFromServer.readLine(), Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
         }

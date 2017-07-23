@@ -1,78 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="tumandroidcourse2017.remoteapiserverconnect.MainActivity">
+    android:focusableInTouchMode="true"
+    tools:context="tumandroidcourse2017.remoteapiserverconnect.MainActivity" >
+
+    <com.nhaarman.supertooltips.ToolTipRelativeLayout
+        android:id="@+id/activity_main_tooltipRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+    </com.nhaarman.supertooltips.ToolTipRelativeLayout>
 
     <TextView
-        android:id="@+id/textView_tooltip"
-        android:layout_width="0dp"
+        android:id="@+id/text_vrep"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/text_tooltip"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        android:layout_marginTop="60dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/text_vrep"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        android:onClick="onClickShowAbout" />
 
-    <EditText
-        android:id="@+id/editText_ip"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/text_controller"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:ems="10"
-        android:hint="@string/text_ip"
-        android:inputType="phone"
-        android:text="@string/input_ip"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_tooltip" />
-
-    <EditText
-        android:id="@+id/editText_port"
-        android:layout_width="0dp"
-        android:layout_height="43dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:ems="10"
-        android:hint="@string/text_port"
-        android:inputType="number"
-        android:text="@string/input_port"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_ip" />
+        android:layout_below="@id/text_vrep"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/text_controller"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:onClick="onClickShowAbout" />
 
     <Button
         android:id="@+id/button_connect"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="100dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/button"
         android:text="@string/text_connect"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_port" />
+        android:textColor="@android:color/white" />
 
-</android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:id="@+id/img_help"
+        android:src="@drawable/ic_help"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_above="@id/button_connect"
+        android:layout_marginBottom="160dp"
+        android:layout_alignEnd="@id/button_connect" />
+
+    <ImageView
+        android:id="@+id/img_ipAddress"
+        android:src="@drawable/ic_ip_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/button_connect"
+        android:layout_marginBottom="100dp"
+        android:layout_alignStart="@id/button_connect" />
+
+    <EditText
+        android:id="@+id/input_ipAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/img_ipAddress"
+        android:layout_alignTop="@id/img_ipAddress"
+        android:layout_alignBottom="@id/img_ipAddress"
+        android:layout_alignEnd="@id/button_connect"
+        android:layout_marginStart="20dp"
+        android:background="@android:color/transparent"
+        android:hint="@string/text_ip"
+        android:textColorHint="@color/gray"
+        android:textColor="@android:color/black"
+        android:ems="10"
+        android:inputType="phone" />
+
+    <ImageView
+        android:id="@+id/img_port"
+        android:src="@drawable/ic_port"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/button_connect"
+        android:layout_marginBottom="50dp"
+        android:layout_alignStart="@id/img_ipAddress" />
+
+    <EditText
+        android:id="@+id/input_port"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/img_port"
+        android:layout_alignTop="@id/img_port"
+        android:layout_alignBottom="@id/img_port"
+        android:layout_alignStart="@id/input_ipAddress"
+        android:layout_alignEnd="@id/button_connect"
+        android:background="@android:color/transparent"
+        android:hint="@string/text_port"
+        android:textColorHint="@color/gray"
+        android:textColor="@android:color/black"
+        android:ems="10"
+        android:inputType="number" />
+
+
+</RelativeLayout>

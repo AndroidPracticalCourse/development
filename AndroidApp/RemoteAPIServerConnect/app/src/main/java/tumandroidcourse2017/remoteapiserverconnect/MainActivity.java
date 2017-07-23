@@ -2,16 +2,18 @@ package tumandroidcourse2017.remoteapiserverconnect;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.StrictMode;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.nhaarman.supertooltips.ToolTip;
+import com.nhaarman.supertooltips.ToolTipRelativeLayout;
+import com.nhaarman.supertooltips.ToolTipView;
 
 import java.io.*;
 import java.net.*;
@@ -20,57 +22,108 @@ import java.util.regex.Pattern;
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocket;
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.setSocket;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity implements View.OnClickListener, ToolTipView.OnToolTipViewClickedListener {
 
     private static final Pattern PATTERN = Pattern.compile(
             "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
 
     public static String IPInfoPort;
 
+    private ToolTipRelativeLayout mToolTipRelativeLayout;
+    private ToolTipView mHelpToolTipView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initWidgets();
+
+        // Setup header text font
+        TextView tx_vrep = (TextView) findViewById(R.id.text_vrep);
+        TextView tx_controller = (TextView) findViewById(R.id.text_controller);
+        Typeface customFont = Typeface.createFromAsset(getAssets(), "fonts/PKMN RBYGSC.ttf");
+        tx_vrep.setTypeface(customFont);
+        tx_controller.setTypeface(customFont);
+
+        // Set up tooltip
+        mToolTipRelativeLayout = (ToolTipRelativeLayout) findViewById(R.id.activity_main_tooltipRelativeLayout);
+        findViewById(R.id.img_help).setOnClickListener(this);
 
         int SDK_INT = android.os.Build.VERSION.SDK_INT;
         if (SDK_INT > 8) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
-            //your codes here
-
         }
     }
 
+    /*
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.global_menu, menu);
         return true;
     }
 
+
     public boolean onOptionsItemSelected(MenuItem item){
         int id = item.getItemId();
         switch (id){
             case R.id.aboutMenu:
-                Intent aboutui = new Intent(this, AboutUI.class);
+                Intent aboutui = new Intent(this, AboutActivity.class);
                 startActivity(aboutui);
             default:
                 return super.onOptionsItemSelected(item);
 
         }
     }
+    */
 
-    private void initWidgets(){
-        Button buttonConnect = (Button) findViewById(R.id.button_connect);
-        buttonConnect.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                doConnect();
+    // =============================================================
+    //                      CLICK LISTENERS
+    // =============================================================
+
+    @Override
+    public void onClick(final View view) {
+        int id = view.getId();
+        if (id == R.id.img_help) {
+            if (mHelpToolTipView == null) {
+                addHelpToolTip();
+            } else {
+                mHelpToolTipView.remove();
+                mHelpToolTipView = null;
             }
-        });
+        } else if (id == R.id.button_connect) {
+            doConnect();
+        }
+    }
+
+    public void onClickShowAbout(View view) {
+        Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onToolTipViewClicked(final ToolTipView toolTipView) {
+        if (mHelpToolTipView == toolTipView) {
+            mHelpToolTipView = null;
+        }
+    }
+
+    // =============================================================
+    //                      HELPER METHODS
+    // =============================================================
+
+    private void addHelpToolTip() {
+        ToolTip toolTip = new ToolTip()
+                .withText(getString(R.string.text_tooltip))
+                .withTextColor(getResources().getColor(R.color.white))
+                .withColor(getResources().getColor(R.color.blue))
+                .withAnimationType(ToolTip.AnimationType.NONE);
+
+        mHelpToolTipView = mToolTipRelativeLayout.showToolTipForView(toolTip, findViewById(R.id.img_help));
+        mHelpToolTipView.setOnToolTipViewClickedListener(this);
     }
 
     private void doConnect(){
-        EditText editTextIP = (EditText) findViewById(R.id.editText_ip);
-        EditText editTextPort = (EditText) findViewById(R.id.editText_port);
+        EditText editTextIP = (EditText) findViewById(R.id.input_ipAddress);
+        EditText editTextPort = (EditText) findViewById(R.id.input_port);
         String ip = editTextIP.getText().toString();
         int port = Integer.parseInt(editTextPort.getText().toString());
         Toast.makeText(MainActivity.this, "Connecting to " + ip + ":" + port, Toast.LENGTH_SHORT).show();
@@ -97,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println("clientID = " + clientID);
                     Toast.makeText(MainActivity.this, getString(R.string.toast_connToServerAccept), Toast.LENGTH_SHORT).show();
 
-                    Intent controlui1 = new Intent(this, ControlUI1.class);
+                    Intent controlui1 = new Intent(this, ControlActivity.class);
                     controlui1.putExtra(IPInfoPort, ip + ":" + port);
                     controlui1.putExtra(getString(R.string.str_clientID), clientID);
                     startActivity(controlui1);
