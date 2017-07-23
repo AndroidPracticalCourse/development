@@ -1,0 +1,7 @@
+#Thu Jul 20 21:01:13 CEST 2017
+base.0=C\:\\Users\\bauer\\Documents\\uni\\android_praktikum\\gitrep\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run_8955537a682d808e32eeb753b1b8a9c60d0730ee
+renamed.1=classes.dex
+renamed.0=classes2.dex
+file.1=C\:\\Users\\bauer\\Documents\\uni\\android_praktikum\\gitrep\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run-bootstrap_41a5a5a80063b897189786d03d17af6d691ee8e5\\classes.dex
+base.1=C\:\\Users\\bauer\\Documents\\uni\\android_praktikum\\gitrep\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run-bootstrap_41a5a5a80063b897189786d03d17af6d691ee8e5
+file.0=C\:\\Users\\bauer\\Documents\\uni\\android_praktikum\\gitrep\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run_8955537a682d808e32eeb753b1b8a9c60d0730ee\\classes.dex
