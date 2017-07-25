@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,11 +29,15 @@ import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocke
 
 public class ControlActivity extends Activity implements SensorEventListener {
 
+    // Widgets and status variables
+    private TextView mTextTiltLeftRight;
+    private TextView mTextTiltUpDown;
+    private boolean isSensorControlEnabled = true;
+
     // Sensors and data
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private boolean isSensorsStarted;
-    private boolean isSensorControlEnabled;
     private boolean sentZeroMovementDataToStopRobotArmMovement = false;
     // Accelerometer
     private int tiltLeftRight;
@@ -42,9 +47,6 @@ public class ControlActivity extends Activity implements SensorEventListener {
     // Logging
     private static final String TAG = ControlActivity.class.getSimpleName();
 
-    // Widgets
-    private TextView mTextTiltLeftRight;
-    private TextView mTextTiltUpDown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,90 +54,76 @@ public class ControlActivity extends Activity implements SensorEventListener {
         setContentView(R.layout.activity_control);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        /*
         initWidgets();
         startSensors();
-        */
     }
 
-    /*
-    public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.global_menu, menu);
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item){
-        int id = item.getItemId();
-        switch (id){
-            case R.id.aboutMenu:
-                Intent aboutui = new Intent(this, AboutActivity.class);
-                startActivity(aboutui);
-            default:
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
-    */
 
     private void initWidgets(){
-        TextView textViewInfo = (TextView) findViewById(R.id.data_detailsIpPort);
-        textViewInfo.setText(getIntent().getStringExtra(MainActivity.IPInfoPort));
-        /*
-        Button buttonStart = (Button) findViewById(R.id.button_start);
-        buttonStart.setOnClickListener(new View.OnClickListener() {
+        // Connection details header
+        TextView textConnDetails = (TextView) findViewById(R.id.data_connDetails);
+        textConnDetails.setText(getIntent().getStringExtra(MainActivity.IPInfoPort));
+
+        // Simulation settings
+        final ImageView buttonStartSimulation = (ImageView) findViewById(R.id.btn_startSimulation);
+        final ImageView buttonPauseSimulation = (ImageView) findViewById(R.id.btn_pauseSimulation);
+        final ImageView buttonStartSimulation2 = (ImageView) findViewById(R.id.btn_startSimulation2);
+        final ImageView buttonStopSimulation = (ImageView) findViewById(R.id.btn_stopSimulation);
+        buttonStartSimulation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                sendCommand(1);
+                sendSimulationData(1);
+                buttonStartSimulation.setVisibility(View.GONE);
+                buttonPauseSimulation.setVisibility(View.VISIBLE);
+                buttonStopSimulation.setVisibility(View.VISIBLE);
             }
         });
-        Button buttonPause = (Button) findViewById(R.id.button_pause);
-        buttonPause.setOnClickListener(new View.OnClickListener() {
+        buttonPauseSimulation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                sendCommand(2);
+                sendSimulationData(2);
+                buttonStartSimulation2.setVisibility(View.VISIBLE);
+                buttonPauseSimulation.setVisibility(View.GONE);
             }
         });
-        Button buttonStop = (Button) findViewById(R.id.button_stop);
-        buttonStop.setOnClickListener(new View.OnClickListener() {
+        buttonStartSimulation2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                sendCommand(3);
+                sendSimulationData(1);
+                buttonStartSimulation2.setVisibility(View.GONE);
+                buttonPauseSimulation.setVisibility(View.VISIBLE);
             }
         });
-         */
-
-        final Button buttonToggleGripper = (Button) findViewById(R.id.btn_toggleGripper);
-        buttonToggleGripper.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    sendGripperData(1);
-                    //buttonToggleGripper.setBackgroundColor(getResources().getColor(R.color.blue));
-                    break;
-                case MotionEvent.ACTION_UP:
-                    sendGripperData(0);
-                    break;
-                default:
-                    break;
-            }
-            return false;
+        buttonStopSimulation.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sendSimulationData(3);
+                buttonStartSimulation.setVisibility(View.VISIBLE);
+                buttonStartSimulation2.setVisibility(View.GONE);
+                buttonPauseSimulation.setVisibility(View.GONE);
+                buttonStopSimulation.setVisibility(View.GONE);
             }
         });
 
-        /*
-        ToggleButton toggleSensorControl = (ToggleButton) findViewById(R.id.toggleSensorControl);
-        toggleSensorControl.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                                                           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               if (isChecked) {
-                   isSensorControlEnabled = true;
-               } else {
-                   isSensorControlEnabled = false;
-               }
-           }
-       });
- */
+        // Control mode settings
+        final TextView toggleControlMode = (TextView) findViewById(R.id.data_selMode);
+        toggleControlMode.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (isSensorControlEnabled) {
+                    toggleControlMode.setText(getString(R.string.text_button));
+                    Toast.makeText(ControlActivity.this, getString(R.string.toast_buttonModeEnabled), Toast.LENGTH_SHORT).show();
+                    stopSensors();
+                    isSensorControlEnabled = false;
+                } else {
+                    toggleControlMode.setText(getString(R.string.text_sensor));
+                    Toast.makeText(ControlActivity.this, getString(R.string.toast_sensorModeEnabled), Toast.LENGTH_SHORT).show();
+                    startSensors();
+                    isSensorControlEnabled = true;
+                }
+            }
+        });
 
-
+        // Received data
         mTextTiltLeftRight = (TextView) findViewById(R.id.data_tiltLeftRight);
         mTextTiltUpDown = (TextView) findViewById(R.id.data_tiltUpDown);
+
+        // Button control settings
         ImageButton btnControlLeft = (ImageButton) findViewById(R.id.btn_controlLeft);
         ImageButton btnControlUp = (ImageButton) findViewById(R.id.btn_controlUp);
         ImageButton btnControlRight = (ImageButton) findViewById(R.id.btn_controlRight);
@@ -148,23 +136,21 @@ public class ControlActivity extends Activity implements SensorEventListener {
         btnControlLeft.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            if(event.getAction() == MotionEvent.ACTION_DOWN){
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 sendMovementDataViaButton("L");
-            }
-            else if (event.getAction() == MotionEvent.ACTION_UP){
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 sendMovementDataViaButton("STOP");
             }
 
             return false;
-             }
+            }
         });
         btnControlUp.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            if(event.getAction() == MotionEvent.ACTION_DOWN){
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 sendMovementDataViaButton("U");
-            }
-            else if (event.getAction() == MotionEvent.ACTION_UP){
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 sendMovementDataViaButton("STOP");
             }
 
@@ -174,10 +160,9 @@ public class ControlActivity extends Activity implements SensorEventListener {
         btnControlRight.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            if(event.getAction() == MotionEvent.ACTION_DOWN){
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 sendMovementDataViaButton("R");
-            }
-            else if (event.getAction() == MotionEvent.ACTION_UP){
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 sendMovementDataViaButton("STOP");
             }
 
@@ -187,13 +172,31 @@ public class ControlActivity extends Activity implements SensorEventListener {
         btnControlDown.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            if(event.getAction() == MotionEvent.ACTION_DOWN){
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 sendMovementDataViaButton("D");
-            }
-            else if (event.getAction() == MotionEvent.ACTION_UP){
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 sendMovementDataViaButton("STOP");
             }
 
+            return false;
+            }
+        });
+
+        // Gripper settings
+        final Button buttonToggleGripper = (Button) findViewById(R.id.btn_toggleGripper);
+        buttonToggleGripper.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    sendGripperData(1);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    sendGripperData(0);
+                    break;
+                default:
+                    break;
+            }
             return false;
             }
         });
@@ -254,13 +257,11 @@ public class ControlActivity extends Activity implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
-                /*
                 Accelerometer accelerometer = new Accelerometer(event, accelerometerLastUpdateTime);
                 accelerometer.calculateRotation();
 
                 getAccelerometerData(accelerometer);
                 processAccelerometerData();
-                 */
                 break;
             default:
                 break;
@@ -280,7 +281,9 @@ public class ControlActivity extends Activity implements SensorEventListener {
     private void processAccelerometerData() {
         if(tiltLeftRight != 0 && tiltUpDown != 0){
             mTextTiltLeftRight.setText("" + tiltLeftRight);
+            mTextTiltLeftRight.setTextColor(getResources().getColor(R.color.blue));
             mTextTiltUpDown.setText("" + tiltUpDown);
+            mTextTiltUpDown.setTextColor(getResources().getColor(R.color.blue));
 
             if (isSensorControlEnabled) {
                 sendMovementData();
@@ -308,15 +311,21 @@ public class ControlActivity extends Activity implements SensorEventListener {
     //                  SOCKET COMMUNICATION METHODS
     // =============================================================
 
-    private void sendCommand(int userInput) {
+    private void sendSimulationData(int userInput) {
         try {
             Socket clientSocket = getSocket();
             DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-            BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
             outToServer.writeBytes(getString(R.string.msg_simulation) + '\n');
             outToServer.writeBytes(userInput + "" + '\n');
-            Toast.makeText(ControlActivity.this, "FROM SERVER: " + inFromServer.readLine(), Toast.LENGTH_SHORT).show();
+
+            if (userInput == 1) {
+                Toast.makeText(this, getString(R.string.toast_simulationStarted), Toast.LENGTH_SHORT).show();
+            } else if (userInput == 2) {
+                Toast.makeText(this, getString(R.string.toast_simulationPaused), Toast.LENGTH_SHORT).show();
+            } else if (userInput == 3) {
+                Toast.makeText(this, getString(R.string.toast_simulationStopped), Toast.LENGTH_SHORT).show();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -333,10 +342,8 @@ public class ControlActivity extends Activity implements SensorEventListener {
             sentZeroMovementDataToStopRobotArmMovement=false;
         } catch (SocketException e) {
             TextView textConnStatus = (TextView) findViewById(R.id.data_connStatus);
-            //TextView textConnDetails = (TextView) findViewById(R.id.data_detailsIpPort);
             textConnStatus.setText(R.string.text_disconnected);
             textConnStatus.setTextColor(getResources().getColor(R.color.red));
-            //textConnDetails.setTextColor(getResources().getColor(R.color.red));
         } catch (IOException e) {
             e.printStackTrace();
         }

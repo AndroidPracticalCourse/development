@@ -6,6 +6,8 @@
     android:orientation="vertical"
     tools:context="tumandroidcourse2017.remoteapiserverconnect.ControlActivity">
 
+    <!-- Connection details header -->
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,7 +15,7 @@
         android:background="@android:color/black" >
 
         <LinearLayout
-            android:id="@+id/linlayout_connDetails"
+            android:id="@+id/linlayout_connHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
@@ -42,7 +44,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/data_detailsIpPort"
+                    android:id="@+id/data_connDetails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -61,6 +63,8 @@
         </LinearLayout>
 
     </FrameLayout>
+
+    <!-- Simulation and control mode settings -->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -81,13 +85,44 @@
                 android:text="SIMULATION" />
 
             <ImageView
-                android:id="@+id/btn_toggleSimulation"
+                android:id="@+id/btn_startSimulation"
                 android:src="@drawable/ic_play"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_below="@id/text_simulation"
                 android:layout_marginTop="15dp"
                 android:layout_centerHorizontal="true" />
+
+            <ImageView
+                android:id="@+id/btn_startSimulation2"
+                android:src="@drawable/ic_play"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_below="@id/text_simulation"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="40dp"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/btn_pauseSimulation"
+                android:src="@drawable/ic_pause"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_below="@id/text_simulation"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="35dp"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/btn_stopSimulation"
+                android:src="@drawable/ic_stop"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_below="@id/text_simulation"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="35dp"
+                android:visibility="gone" />
 
             <View
                 android:layout_width="0.5dp"
@@ -125,6 +160,8 @@
         </RelativeLayout>
 
     </LinearLayout>
+
+    <!-- Received data -->
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -215,73 +252,60 @@
 
     </FrameLayout>
 
+    <!-- Button and gripper control -->
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         android:layout_weight="0.9" >
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="40dp"
-            android:layout_marginEnd="40dp" >
+        <ImageButton
+            android:id="@+id/btn_controlLeft"
+            android:src="@drawable/ic_arrow_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="80dp"/>
 
-            <ImageButton
-                android:id="@+id/btn_controlLeft"
-                android:src="@drawable/ic_arrow_left"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="80dp"/>
+        <ImageButton
+            android:id="@+id/btn_controlDown"
+            android:src="@drawable/ic_arrow_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/btn_controlLeft"
+            android:layout_alignBottom="@id/btn_controlLeft" />
 
-            <ImageButton
-                android:id="@+id/btn_controlDown"
-                android:src="@drawable/ic_arrow_down"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/btn_controlLeft"
-                android:layout_alignBottom="@id/btn_controlLeft" />
+        <ImageButton
+            android:id="@+id/btn_controlUp"
+            android:src="@drawable/ic_arrow_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/btn_controlDown"
+            android:layout_alignStart="@+id/btn_controlDown" />
 
-            <ImageButton
-                android:id="@+id/btn_controlUp"
-                android:src="@drawable/ic_arrow_up"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/btn_controlDown"
-                android:layout_alignStart="@+id/btn_controlDown" />
+        <ImageButton
+            android:id="@+id/btn_controlRight"
+            android:src="@drawable/ic_arrow_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/btn_controlDown"
+            android:layout_toEndOf="@+id/btn_controlDown" />
 
-            <ImageButton
-                android:id="@+id/btn_controlRight"
-                android:src="@drawable/ic_arrow_right"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/btn_controlDown"
-                android:layout_toEndOf="@+id/btn_controlDown" />
+        <Button
+            android:id="@+id/btn_toggleGripper"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignBottom="@id/btn_controlLeft"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:text="HOLD TO \nGRAB"
+            android:textSize="10sp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/button_round" />
 
-            <Button
-                android:id="@+id/btn_toggleGripper"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_alignBottom="@id/btn_controlLeft"
-                android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"
-                android:background="@drawable/grip_button" />
-
-            <TextView
-                android:id="@+id/text_gripperTip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/btn_toggleGripper"
-                android:layout_alignStart="@+id/btn_toggleGripper"
-                android:layout_marginStart="15dp"
-                android:text="HOLD TO GRAB"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 
 
 </LinearLayout>

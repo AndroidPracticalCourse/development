@@ -35,7 +35,7 @@ public class Server implements Runnable {
 			  	if (receivedBuffer.equals(MSG_REMOTEAPI_CONNECTREQ)) { // initial connection setup
                     acceptConnectionRequest(outToClient);
 			  	} else if (receivedBuffer.equals(MSG_SIMULATION)) { // commands to start/pause/stop simulation
-					modifySimulation(inFromClient, outToClient);
+					receiveSimulationData(inFromClient, outToClient);
 			  	} else if (receivedBuffer.equals(MSG_MOVEMENTDATA)) { // receive sensor data from Android device and send to the robot
                     receiveMovementData(inFromClient, outToClient);
                 } else if (receivedBuffer.equals(MSG_GRIPPERDATA)) { // receive data to control the gripper
@@ -57,24 +57,20 @@ public class Server implements Runnable {
         outToClient.writeBytes(clientID + "" + '\n');
     }
 
-    private void modifySimulation(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException {
-		
+    private void receiveSimulationData(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException {
         int clientCmd = Integer.parseInt(inFromClient.readLine());
         System.out.println("Received: " + clientCmd);
         if (clientCmd == 1) {
             vrep.simxStartSimulation(clientID, clientID);
-            System.out.println("V-REP simulation started as requested");
-            outToClient.writeBytes("V-REP simulation started as requested\n");
+            System.out.println("V-REP simulation started");
         }
         else if (clientCmd==2) {
             vrep.simxPauseSimulation(clientID, clientID);
-            System.out.println("V-REP simulation paused as requested");
-            outToClient.writeBytes("V-REP simulation paused as requested\n");
+            System.out.println("V-REP simulation paused");
         }
         else if (clientCmd==3) {
             vrep.simxStopSimulation(clientID, clientID);
-            System.out.println("V-REP simulation stopped as requested");
-            outToClient.writeBytes("V-REP simulation stopped as requested\n");
+            System.out.println("V-REP simulation stopped");
         } else {
         	System.exit(0);
         }

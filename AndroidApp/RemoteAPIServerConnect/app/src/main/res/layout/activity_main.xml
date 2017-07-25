@@ -25,7 +25,7 @@
         android:textColor="@android:color/black"
         android:textSize="50sp"
         android:textStyle="bold"
-        android:onClick="onClickShowAbout" />
+        android:onClick="onClickHeader" />
 
     <TextView
         android:id="@+id/text_controller"
@@ -39,20 +39,20 @@
         android:textColor="@android:color/black"
         android:textSize="25sp"
         android:textStyle="bold"
-        android:onClick="onClickShowAbout" />
+        android:onClick="onClickHeader" />
 
     <Button
         android:id="@+id/button_connect"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="120dp"
+        android:layout_marginBottom="100dp"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
         android:background="@drawable/button"
         android:text="@string/text_connect"
         android:textColor="@android:color/white"
-        android:onClick="onClickConnect" />
+        android:onClick="onClickConnectButton" />
 
     <ImageView
         android:id="@+id/img_help"
@@ -60,7 +60,7 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_above="@id/button_connect"
-        android:layout_marginBottom="180dp"
+        android:layout_marginBottom="160dp"
         android:layout_alignEnd="@id/button_connect" />
 
     <ImageView
@@ -69,7 +69,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/button_connect"
-        android:layout_marginBottom="120dp"
+        android:layout_marginBottom="100dp"
         android:layout_alignStart="@id/button_connect" />
 
     <EditText
@@ -95,7 +95,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/button_connect"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="50dp"
         android:layout_alignStart="@id/img_ipAddress" />
 
     <EditText

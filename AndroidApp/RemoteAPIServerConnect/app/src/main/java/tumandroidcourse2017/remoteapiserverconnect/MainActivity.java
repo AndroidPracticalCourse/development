@@ -38,11 +38,11 @@ public class MainActivity extends Activity implements View.OnClickListener, Tool
         setContentView(R.layout.activity_main);
 
         // Setup header text font
-        TextView tx_vrep = (TextView) findViewById(R.id.text_vrep);
-        TextView tx_controller = (TextView) findViewById(R.id.text_controller);
+        TextView textVrep = (TextView) findViewById(R.id.text_vrep);
+        TextView textController = (TextView) findViewById(R.id.text_controller);
         Typeface customFont = Typeface.createFromAsset(getAssets(), "fonts/PKMN RBYGSC.ttf");
-        tx_vrep.setTypeface(customFont);
-        tx_controller.setTypeface(customFont);
+        textVrep.setTypeface(customFont);
+        textController.setTypeface(customFont);
 
         // Set up tooltip
         mToolTipRelativeLayout = (ToolTipRelativeLayout) findViewById(R.id.activity_main_tooltipRelativeLayout);
@@ -54,26 +54,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Tool
             StrictMode.setThreadPolicy(policy);
         }
     }
-
-    /*
-    public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.global_menu, menu);
-        return true;
-    }
-
-
-    public boolean onOptionsItemSelected(MenuItem item){
-        int id = item.getItemId();
-        switch (id){
-            case R.id.aboutMenu:
-                Intent aboutui = new Intent(this, AboutActivity.class);
-                startActivity(aboutui);
-            default:
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
-    */
 
     // =============================================================
     //                      CLICK LISTENERS
@@ -92,19 +72,21 @@ public class MainActivity extends Activity implements View.OnClickListener, Tool
         }
     }
 
-    public void onClickShowAbout(View view) {
+    public void onClickHeader(View view) {
         Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
     }
 
-    public void onClickConnect(View view) {
+    public void onClickConnectButton(View view) {
+        /*
         // To test the UI of ControlActivity
         Intent intent = new Intent(this, ControlActivity.class);
         intent.putExtra(IPInfoPort, "192.168.137.1:6789");
         intent.putExtra(getString(R.string.str_clientID), 0);
         startActivity(intent);
+        */
 
-        // doConnect();
+        doConnect();
     }
 
     @Override
@@ -122,7 +104,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Tool
         ToolTip toolTip = new ToolTip()
                 .withText(getString(R.string.text_tooltip))
                 .withTextColor(getResources().getColor(R.color.white))
-                .withColor(getResources().getColor(R.color.red))
+                .withColor(getResources().getColor(R.color.darkRed))
                 .withAnimationType(ToolTip.AnimationType.NONE);
 
         mHelpToolTipView = mToolTipRelativeLayout.showToolTipForView(toolTip, findViewById(R.id.img_help));
@@ -151,12 +133,11 @@ public class MainActivity extends Activity implements View.OnClickListener, Tool
                 System.out.println("Server response read");
 
                 if (serverResponse.equals(getString(R.string.msg_remoteApiConnectAccept))) {
-                    System.out.println("Connection accepted");
                     String id = inFromServer.readLine();
                     System.out.println("id = " + id);
                     int clientID = Integer.parseInt(id);
                     System.out.println("clientID = " + clientID);
-                    Toast.makeText(MainActivity.this, getString(R.string.toast_connToServerAccept), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Connection to " + ip + ":" + port + " accepted", Toast.LENGTH_SHORT).show();
 
                     Intent controlui1 = new Intent(this, ControlActivity.class);
                     controlui1.putExtra(IPInfoPort, ip + ":" + port);
