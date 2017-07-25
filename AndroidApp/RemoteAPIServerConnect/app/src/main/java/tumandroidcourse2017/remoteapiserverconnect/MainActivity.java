@@ -98,15 +98,13 @@ public class MainActivity extends Activity implements View.OnClickListener, Tool
     }
 
     public void onClickConnect(View view) {
-        /*
         // To test the UI of ControlActivity
         Intent intent = new Intent(this, ControlActivity.class);
         intent.putExtra(IPInfoPort, "192.168.137.1:6789");
         intent.putExtra(getString(R.string.str_clientID), 0);
         startActivity(intent);
-        */
 
-        doConnect();
+        // doConnect();
     }
 
     @Override

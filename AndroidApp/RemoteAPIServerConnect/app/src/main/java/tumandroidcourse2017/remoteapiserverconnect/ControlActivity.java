@@ -2,7 +2,6 @@ package tumandroidcourse2017.remoteapiserverconnect;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
-import android.graphics.PorterDuff;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -12,11 +11,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -55,8 +52,10 @@ public class ControlActivity extends Activity implements SensorEventListener {
         setContentView(R.layout.activity_control);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        /*
         initWidgets();
         startSensors();
+        */
     }
 
     /*
@@ -120,6 +119,8 @@ public class ControlActivity extends Activity implements SensorEventListener {
             return false;
             }
         });
+
+        /*
         ToggleButton toggleSensorControl = (ToggleButton) findViewById(R.id.toggleSensorControl);
         toggleSensorControl.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -130,6 +131,8 @@ public class ControlActivity extends Activity implements SensorEventListener {
                }
            }
        });
+ */
+
 
         mTextTiltLeftRight = (TextView) findViewById(R.id.data_tiltLeftRight);
         mTextTiltUpDown = (TextView) findViewById(R.id.data_tiltUpDown);
@@ -137,10 +140,10 @@ public class ControlActivity extends Activity implements SensorEventListener {
         ImageButton btnControlUp = (ImageButton) findViewById(R.id.btn_controlUp);
         ImageButton btnControlRight = (ImageButton) findViewById(R.id.btn_controlRight);
         ImageButton btnControlDown = (ImageButton) findViewById(R.id.btn_controlDown);
-        btnControlLeft.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
-        btnControlUp.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
-        btnControlRight.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
-        btnControlDown.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
+        //btnControlLeft.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
+        //btnControlUp.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
+        //btnControlRight.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
+        //btnControlDown.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
 
         btnControlLeft.setOnTouchListener(new View.OnTouchListener(){
             @Override
@@ -251,11 +254,13 @@ public class ControlActivity extends Activity implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
+                /*
                 Accelerometer accelerometer = new Accelerometer(event, accelerometerLastUpdateTime);
                 accelerometer.calculateRotation();
 
                 getAccelerometerData(accelerometer);
                 processAccelerometerData();
+                 */
                 break;
             default:
                 break;
@@ -327,9 +332,11 @@ public class ControlActivity extends Activity implements SensorEventListener {
             outToServer.writeBytes(tiltUpDown + "" + '\n');
             sentZeroMovementDataToStopRobotArmMovement=false;
         } catch (SocketException e) {
-            TextView textConnStatus = (TextView) findViewById(R.id.text_connStatus);
+            TextView textConnStatus = (TextView) findViewById(R.id.data_connStatus);
+            //TextView textConnDetails = (TextView) findViewById(R.id.data_detailsIpPort);
             textConnStatus.setText(R.string.text_disconnected);
             textConnStatus.setTextColor(getResources().getColor(R.color.red));
+            //textConnDetails.setTextColor(getResources().getColor(R.color.red));
         } catch (IOException e) {
             e.printStackTrace();
         }
