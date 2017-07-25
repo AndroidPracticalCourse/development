@@ -33,9 +33,9 @@ public class Accelerometer {
             g[1] = (float) (g[1] / norm_Of_g);
             g[2] = (float) (g[2] / norm_Of_g);
 
-            tiltLeftRight = (int) Math.round(Math.toDegrees(Math.atan2(g[0], g[2])));
+            tiltLeftRight = (int) Math.round(Math.toDegrees(Math.atan2(g[0], g[2]))) * -1;
             tiltUpDown = (int) (Math.round(Math.toDegrees(Math.atan2(g[1], g[2]))));
-            System.out.println("interval = " + interval + ", tiltLeftRight = " + tiltLeftRight + ", tiltUpDown = " + tiltUpDown);
+            //System.out.println("interval = " + interval + ", tiltLeftRight = " + tiltLeftRight + ", tiltUpDown = " + tiltUpDown);
         }
     }
 

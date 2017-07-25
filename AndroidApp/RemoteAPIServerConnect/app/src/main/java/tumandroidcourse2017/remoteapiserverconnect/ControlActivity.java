@@ -1,16 +1,14 @@
 package tumandroidcourse2017.remoteapiserverconnect;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.content.pm.ActivityInfo;
+import android.graphics.PorterDuff;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -25,19 +23,20 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.net.SocketException;
 
 import tumandroidcourse2017.remoteapiserverconnect.sensors.Accelerometer;
 
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocket;
 
-public class ControlActivity extends AppCompatActivity implements SensorEventListener {
+public class ControlActivity extends Activity implements SensorEventListener {
 
     // Sensors and data
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private boolean isSensorsStarted;
     private boolean isSensorControlEnabled;
-    private boolean sentZeroMovementDataToStopRobotArmMovement=false;
+    private boolean sentZeroMovementDataToStopRobotArmMovement = false;
     // Accelerometer
     private int tiltLeftRight;
     private int tiltUpDown;
@@ -47,17 +46,20 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
     private static final String TAG = ControlActivity.class.getSimpleName();
 
     // Widgets
-    private TextView TiltData_Text;
+    private TextView mTextTiltLeftRight;
+    private TextView mTextTiltUpDown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_control_ui1);
+        setContentView(R.layout.activity_control);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         initWidgets();
         startSensors();
     }
 
+    /*
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.global_menu, menu);
         return true;
@@ -74,10 +76,12 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
 
         }
     }
+    */
 
     private void initWidgets(){
-        TextView textViewInfo = (TextView) findViewById(R.id.textView_info);
-        textViewInfo.setText("Connected to " + getIntent().getStringExtra(MainActivity.IPInfoPort)); // TODO - change to append()
+        TextView textViewInfo = (TextView) findViewById(R.id.data_detailsIpPort);
+        textViewInfo.setText(getIntent().getStringExtra(MainActivity.IPInfoPort));
+        /*
         Button buttonStart = (Button) findViewById(R.id.button_start);
         buttonStart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -96,89 +100,98 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
                 sendCommand(3);
             }
         });
+         */
 
-        Button buttonToggleGripper = (Button) findViewById(R.id.btn_toggleGripper);
+        final Button buttonToggleGripper = (Button) findViewById(R.id.btn_toggleGripper);
         buttonToggleGripper.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        sendGripperData(1);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        sendGripperData(0);
-                        break;
-                    default:
-                        break;
-                }
-                return false;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    sendGripperData(1);
+                    //buttonToggleGripper.setBackgroundColor(getResources().getColor(R.color.blue));
+                    break;
+                case MotionEvent.ACTION_UP:
+                    sendGripperData(0);
+                    break;
+                default:
+                    break;
+            }
+            return false;
             }
         });
         ToggleButton toggleSensorControl = (ToggleButton) findViewById(R.id.toggleSensorControl);
         toggleSensorControl.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                                               if (isChecked) {
-                                                                   isSensorControlEnabled = true;
-                                                               } else {
-                                                                   isSensorControlEnabled = false;
-                                                               }
-                                                           }
-                                                       });
-        TiltData_Text = (TextView) findViewById(R.id.TiltData_Text);
-        ImageButton control_left = (ImageButton) findViewById(R.id.control_left);
-        ImageButton control_up = (ImageButton) findViewById(R.id.control_up);
-        ImageButton control_right = (ImageButton) findViewById(R.id.control_right);
-        ImageButton control_down = (ImageButton) findViewById(R.id.control_down);
-        control_left.setOnTouchListener(new View.OnTouchListener(){
+               if (isChecked) {
+                   isSensorControlEnabled = true;
+               } else {
+                   isSensorControlEnabled = false;
+               }
+           }
+       });
+
+        mTextTiltLeftRight = (TextView) findViewById(R.id.data_tiltLeftRight);
+        mTextTiltUpDown = (TextView) findViewById(R.id.data_tiltUpDown);
+        ImageButton btnControlLeft = (ImageButton) findViewById(R.id.btn_controlLeft);
+        ImageButton btnControlUp = (ImageButton) findViewById(R.id.btn_controlUp);
+        ImageButton btnControlRight = (ImageButton) findViewById(R.id.btn_controlRight);
+        ImageButton btnControlDown = (ImageButton) findViewById(R.id.btn_controlDown);
+        btnControlLeft.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
+        btnControlUp.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
+        btnControlRight.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
+        btnControlDown.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
+
+        btnControlLeft.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN){
-                    sendMovementDataViaButton("L");
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP){
-                    sendMovementDataViaButton("STOP");
-                }
+            if(event.getAction() == MotionEvent.ACTION_DOWN){
+                sendMovementDataViaButton("L");
+            }
+            else if (event.getAction() == MotionEvent.ACTION_UP){
+                sendMovementDataViaButton("STOP");
+            }
 
-                return false;
+            return false;
+             }
+        });
+        btnControlUp.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+            if(event.getAction() == MotionEvent.ACTION_DOWN){
+                sendMovementDataViaButton("U");
+            }
+            else if (event.getAction() == MotionEvent.ACTION_UP){
+                sendMovementDataViaButton("STOP");
+            }
+
+            return false;
             }
         });
-        control_up.setOnTouchListener(new View.OnTouchListener(){
+        btnControlRight.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN){
-                    sendMovementDataViaButton("U");
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP){
-                    sendMovementDataViaButton("STOP");
-                }
+            if(event.getAction() == MotionEvent.ACTION_DOWN){
+                sendMovementDataViaButton("R");
+            }
+            else if (event.getAction() == MotionEvent.ACTION_UP){
+                sendMovementDataViaButton("STOP");
+            }
 
-                return false;
+            return false;
             }
         });
-        control_right.setOnTouchListener(new View.OnTouchListener(){
+        btnControlDown.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN){
-                    sendMovementDataViaButton("R");
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP){
-                    sendMovementDataViaButton("STOP");
-                }
-
-                return false;
+            if(event.getAction() == MotionEvent.ACTION_DOWN){
+                sendMovementDataViaButton("D");
             }
-        });
-        control_down.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN){
-                    sendMovementDataViaButton("D");
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP){
-                    sendMovementDataViaButton("STOP");
-                }
+            else if (event.getAction() == MotionEvent.ACTION_UP){
+                sendMovementDataViaButton("STOP");
+            }
 
-                return false;
+            return false;
             }
         });
 
@@ -241,38 +254,49 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
                 Accelerometer accelerometer = new Accelerometer(event, accelerometerLastUpdateTime);
                 accelerometer.calculateRotation();
 
-                tiltLeftRight = accelerometer.getTiltLeftRight();
-                tiltUpDown = accelerometer.getTiltUpDown();
-                accelerometerLastUpdateTime = accelerometer.getLastUpdateTime();
-                if(tiltLeftRight!=0 && tiltUpDown!=0){
-                    TiltData_Text.setText("tiltLeftRight:"+tiltLeftRight+" tiltUpDown:"+tiltUpDown);
-                    if(isSensorControlEnabled){
-                        sendMovementData();
-                    }
-                    else{
-                        if(!sentZeroMovementDataToStopRobotArmMovement){
-                            try {
-                                Socket clientSocket = getSocket();
-                                DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-                                outToServer.writeBytes(getString(R.string.msg_movementdata) + '\n');
-
-                                outToServer.writeBytes(0 + "" + '\n');
-                                outToServer.writeBytes(0 + "" + '\n');
-                                sentZeroMovementDataToStopRobotArmMovement = true;
-                            }
-                            catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-                }
-
+                getAccelerometerData(accelerometer);
+                processAccelerometerData();
                 break;
             default:
                 break;
         }
+    }
 
+    // =============================================================
+    //                          HELPER METHODS
+    // =============================================================
+
+    private void getAccelerometerData(Accelerometer accelerometer) {
+        tiltLeftRight = accelerometer.getTiltLeftRight();
+        tiltUpDown = accelerometer.getTiltUpDown();
+        accelerometerLastUpdateTime = accelerometer.getLastUpdateTime();
+    }
+
+    private void processAccelerometerData() {
+        if(tiltLeftRight != 0 && tiltUpDown != 0){
+            mTextTiltLeftRight.setText("" + tiltLeftRight);
+            mTextTiltUpDown.setText("" + tiltUpDown);
+
+            if (isSensorControlEnabled) {
+                sendMovementData();
+            } else {
+                if (!sentZeroMovementDataToStopRobotArmMovement) {
+                    try {
+                        Socket clientSocket = getSocket();
+                        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+                        outToServer.writeBytes(getString(R.string.msg_movementdata) + '\n');
+
+                        outToServer.writeBytes(0 + "" + '\n');
+                        outToServer.writeBytes(0 + "" + '\n');
+                        sentZeroMovementDataToStopRobotArmMovement = true;
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        }
     }
 
     // =============================================================
@@ -302,13 +326,17 @@ public class ControlActivity extends AppCompatActivity implements SensorEventLis
             outToServer.writeBytes(tiltLeftRight + "" + '\n');
             outToServer.writeBytes(tiltUpDown + "" + '\n');
             sentZeroMovementDataToStopRobotArmMovement=false;
+        } catch (SocketException e) {
+            TextView textConnStatus = (TextView) findViewById(R.id.text_connStatus);
+            textConnStatus.setText(R.string.text_disconnected);
+            textConnStatus.setTextColor(getResources().getColor(R.color.red));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void sendMovementDataViaButton(String direction) {
-        if(!isSensorControlEnabled){
+        if (!isSensorControlEnabled) {
             try {
                 Socket clientSocket = getSocket();
                 DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());

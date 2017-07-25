@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="red">#E93D3D</color>
+    <color name="red">#FF0000</color>
+    <color name="darkRed">#A22A2A</color>
     <color name="midnightBlue">#191970</color>
     <color name="gray">#97979C</color>
     <color name="blue">#3A5BCC</color>
+    <color name="darkGreen">#39890F</color>
     <color name="white">#FFFFFF</color>
+    <color name="transparent">#80000000</color>
+
 </resources>

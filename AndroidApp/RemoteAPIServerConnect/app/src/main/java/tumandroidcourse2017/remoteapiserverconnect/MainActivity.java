@@ -89,14 +89,24 @@ public class MainActivity extends Activity implements View.OnClickListener, Tool
                 mHelpToolTipView.remove();
                 mHelpToolTipView = null;
             }
-        } else if (id == R.id.button_connect) {
-            doConnect();
         }
     }
 
     public void onClickShowAbout(View view) {
         Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
+    }
+
+    public void onClickConnect(View view) {
+        /*
+        // To test the UI of ControlActivity
+        Intent intent = new Intent(this, ControlActivity.class);
+        intent.putExtra(IPInfoPort, "192.168.137.1:6789");
+        intent.putExtra(getString(R.string.str_clientID), 0);
+        startActivity(intent);
+        */
+
+        doConnect();
     }
 
     @Override
@@ -114,7 +124,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Tool
         ToolTip toolTip = new ToolTip()
                 .withText(getString(R.string.text_tooltip))
                 .withTextColor(getResources().getColor(R.color.white))
-                .withColor(getResources().getColor(R.color.blue))
+                .withColor(getResources().getColor(R.color.red))
                 .withAnimationType(ToolTip.AnimationType.NONE);
 
         mHelpToolTipView = mToolTipRelativeLayout.showToolTipForView(toolTip, findViewById(R.id.img_help));
@@ -137,7 +147,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Tool
                 BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
                 System.out.println("Writing some bytes");
-                outToServer.writeBytes("REMOTEAPI_CONNECTREQ\n");
+                outToServer.writeBytes(getString(R.string.msg_remoteApiConnectReq) + '\n');
                 System.out.println("Bytes written");
                 String serverResponse = inFromServer.readLine();
                 System.out.println("Server response read");

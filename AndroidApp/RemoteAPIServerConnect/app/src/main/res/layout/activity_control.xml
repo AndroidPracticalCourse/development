@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="tumandroidcourse2017.remoteapiserverconnect.ControlActivity">
+
+    <LinearLayout
+        android:id="@+id/linlayout_connDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp" >
+
+        <ImageView
+            android:id="@+id/img_phone"
+            android:src="@drawable/ic_phone_android"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_connStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/text_connected"
+                android:textColor="@color/darkGreen"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/data_detailsIpPort"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_laptop"
+            android:src="@drawable/ic_laptop"
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+
+    </LinearLayout>
+
+
+    <ToggleButton
+        android:id="@+id/toggleSensorControl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="97dp"
+        android:checked="false"
+        android:text="ToggleButton"
+        android:textOff="Sensor Control OFF | Button Control ON"
+        android:textOn="Sensor Control ON | Button Control OFF"
+        android:layout_below="@+id/linlayout_connDetails"
+        android:layout_centerHorizontal="true" />
+
+    <!--
+       <Button
+           android:id="@+id/button_start"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignLeft="@+id/textView10"
+           android:layout_alignStart="@+id/textView10"
+           android:layout_below="@+id/textView10"
+           android:layout_marginTop="11dp"
+           android:layout_weight="1"
+           android:paddingRight="20dp"
+           android:text="@string/text_startSimulation"
+           android:textSize="14sp" />
+
+
+       <TextView
+           android:id="@+id/textView10"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Simulation"
+           android:layout_marginTop="11dp"
+           android:layout_below="@+id/toggleSensorControl"
+           android:layout_alignLeft="@+id/toggleSensorControl"
+           android:layout_alignStart="@+id/toggleSensorControl" />
+
+       <Button
+           android:id="@+id/button_pause"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignTop="@+id/button_start"
+           android:layout_toEndOf="@+id/button_start"
+           android:layout_toRightOf="@+id/button_start"
+           android:layout_weight="1"
+           android:paddingRight="20dp"
+           android:text="@string/text_pauseSimulation" />
+
+       <Button
+           android:id="@+id/button_stop"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_weight="1"
+           android:paddingRight="20dp"
+           android:text="@string/text_stopSimulation"
+           android:layout_alignBaseline="@+id/button_pause"
+           android:layout_alignBottom="@+id/button_pause"
+           android:layout_toRightOf="@+id/button_pause"
+           android:layout_toEndOf="@+id/button_pause" />
+   -->
+
+    <LinearLayout
+        android:id="@+id/linlayout_dataTable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_below="@id/linlayout_connDetails"
+        android:layout_marginTop="230dp"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/icon_leftright"
+                android:src="@drawable/ic_swap_horiz"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/icon_updown"
+                android:src="@drawable/ic_swap_vert"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/icon_colour"
+                android:src="@drawable/ic_color_lens"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp" >
+
+            <TextView
+                android:id="@+id/data_tiltLeftRight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="20sp"
+                android:textColor="@android:color/black"
+                android:textAlignment="center"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/data_tiltUpDown"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="20sp"
+                android:textColor="@android:color/black"
+                android:textAlignment="center"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/data_colorObject"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:textSize="20sp"
+                android:textColor="@android:color/black"
+                android:textAlignment="center"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btn_controlLeft"
+        android:src="@drawable/ic_arrow_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="40dp"
+        android:layout_marginBottom="100dp" />
+
+    <ImageButton
+        android:id="@+id/btn_controlDown"
+        android:src="@drawable/ic_arrow_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btn_controlLeft"
+        android:layout_toEndOf="@+id/btn_controlLeft" />
+
+    <ImageButton
+        android:id="@+id/btn_controlUp"
+        android:src="@drawable/ic_arrow_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/btn_controlDown"
+        android:layout_alignStart="@+id/btn_controlDown" />
+
+    <ImageButton
+        android:id="@+id/btn_controlRight"
+        android:src="@drawable/ic_arrow_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btn_controlDown"
+        android:layout_toEndOf="@+id/btn_controlDown" />
+
+    <Button
+        android:id="@+id/btn_toggleGripper"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignBottom="@id/btn_controlLeft"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/grip_button" />
+
+    <TextView
+        android:id="@+id/text_gripperTip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_toggleGripper"
+        android:layout_alignStart="@+id/btn_toggleGripper"
+        android:layout_marginStart="15dp"
+        android:text="HOLD TO GRAB"
+        android:textSize="10sp"
+        android:textStyle="bold" />
+
+
+</RelativeLayout>
