@@ -2,6 +2,7 @@ package tumandroidcourse2017.remoteapiserverconnect;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
+import android.content.res.ColorStateList;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -16,10 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -32,14 +31,17 @@ public class ControlActivity extends Activity implements SensorEventListener {
     // Widgets and status variables
     private TextView mTextTiltLeftRight;
     private TextView mTextTiltUpDown;
+    private ImageButton mButtonControlLeft;
+    private ImageButton mButtonControlDown;
+    private ImageButton mButtonControlUp;
+    private ImageButton mButtonControlRight;
     private boolean isSensorControlEnabled = true;
 
-    // Sensors and data
+    // Sensors
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private boolean isSensorsStarted;
-    private boolean sentZeroMovementDataToStopRobotArmMovement = false;
-    // Accelerometer
+    // Accelerometer data
     private int tiltLeftRight;
     private int tiltUpDown;
     private long accelerometerLastUpdateTime = 0;
@@ -106,16 +108,18 @@ public class ControlActivity extends Activity implements SensorEventListener {
         toggleControlMode.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (isSensorControlEnabled) {
+                    isSensorControlEnabled = false;
                     toggleControlMode.setText(getString(R.string.text_button));
                     Toast.makeText(ControlActivity.this, getString(R.string.toast_buttonModeEnabled), Toast.LENGTH_SHORT).show();
                     stopSensors();
-                    isSensorControlEnabled = false;
+                    processAccelerometerData(); // send a last (0,0) to stop the movement of the arm
                 } else {
+                    isSensorControlEnabled = true;
                     toggleControlMode.setText(getString(R.string.text_sensor));
                     Toast.makeText(ControlActivity.this, getString(R.string.toast_sensorModeEnabled), Toast.LENGTH_SHORT).show();
                     startSensors();
-                    isSensorControlEnabled = true;
                 }
+                toggleDisplayOfWidgets();
             }
         });
 
@@ -124,16 +128,12 @@ public class ControlActivity extends Activity implements SensorEventListener {
         mTextTiltUpDown = (TextView) findViewById(R.id.data_tiltUpDown);
 
         // Button control settings
-        ImageButton btnControlLeft = (ImageButton) findViewById(R.id.btn_controlLeft);
-        ImageButton btnControlUp = (ImageButton) findViewById(R.id.btn_controlUp);
-        ImageButton btnControlRight = (ImageButton) findViewById(R.id.btn_controlRight);
-        ImageButton btnControlDown = (ImageButton) findViewById(R.id.btn_controlDown);
-        //btnControlLeft.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
-        //btnControlUp.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
-        //btnControlRight.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
-        //btnControlDown.setColorFilter(getResources().getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
+        mButtonControlLeft = (ImageButton) findViewById(R.id.btn_controlLeft);
+        mButtonControlUp = (ImageButton) findViewById(R.id.btn_controlUp);
+        mButtonControlRight= (ImageButton) findViewById(R.id.btn_controlRight);
+        mButtonControlDown = (ImageButton) findViewById(R.id.btn_controlDown);
 
-        btnControlLeft.setOnTouchListener(new View.OnTouchListener(){
+        mButtonControlLeft.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -145,7 +145,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
             return false;
             }
         });
-        btnControlUp.setOnTouchListener(new View.OnTouchListener(){
+        mButtonControlUp.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -157,7 +157,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
             return false;
             }
         });
-        btnControlRight.setOnTouchListener(new View.OnTouchListener(){
+        mButtonControlRight.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -169,7 +169,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
             return false;
             }
         });
-        btnControlDown.setOnTouchListener(new View.OnTouchListener(){
+        mButtonControlDown.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -272,6 +272,26 @@ public class ControlActivity extends Activity implements SensorEventListener {
     //                          HELPER METHODS
     // =============================================================
 
+    // Called when the control mode is toggled between Button and Sensor
+    // The relevant information will be highlighted accordingly depending on the selected mode
+    private void toggleDisplayOfWidgets() {
+        if (isSensorsStarted) { // Sensor mode
+            mTextTiltLeftRight.setTextColor(getResources().getColor(R.color.blue));
+            mTextTiltUpDown.setTextColor(getResources().getColor(R.color.blue));
+            mButtonControlLeft.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.lightGray)));
+            mButtonControlUp.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.lightGray)));
+            mButtonControlRight.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.lightGray)));
+            mButtonControlDown.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.lightGray)));
+        } else { // Button mode
+            mButtonControlLeft.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.blue)));
+            mButtonControlUp.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.blue)));
+            mButtonControlRight.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.blue)));
+            mButtonControlDown.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.blue)));
+            mTextTiltLeftRight.setTextColor(getResources().getColor(R.color.lightGray));
+            mTextTiltUpDown.setTextColor(getResources().getColor(R.color.lightGray));
+        }
+    }
+
     private void getAccelerometerData(Accelerometer accelerometer) {
         tiltLeftRight = accelerometer.getTiltLeftRight();
         tiltUpDown = accelerometer.getTiltUpDown();
@@ -280,30 +300,16 @@ public class ControlActivity extends Activity implements SensorEventListener {
 
     private void processAccelerometerData() {
         if(tiltLeftRight != 0 && tiltUpDown != 0){
-            mTextTiltLeftRight.setText("" + tiltLeftRight);
-            mTextTiltLeftRight.setTextColor(getResources().getColor(R.color.blue));
+            mTextTiltLeftRight.setText("" + (tiltLeftRight * -1));
             mTextTiltUpDown.setText("" + tiltUpDown);
-            mTextTiltUpDown.setTextColor(getResources().getColor(R.color.blue));
 
-            if (isSensorControlEnabled) {
-                sendMovementData();
-            } else {
-                if (!sentZeroMovementDataToStopRobotArmMovement) {
-                    try {
-                        Socket clientSocket = getSocket();
-                        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-                        outToServer.writeBytes(getString(R.string.msg_movementdata) + '\n');
-
-                        outToServer.writeBytes(0 + "" + '\n');
-                        outToServer.writeBytes(0 + "" + '\n');
-                        sentZeroMovementDataToStopRobotArmMovement = true;
-                    }
-                    catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+            // when the control mode is switched to 'Button', send zeroes to stop the arm movement
+            if (!isSensorControlEnabled) {
+                tiltLeftRight = 0;
+                tiltUpDown = 0;
             }
 
+            sendMovementData();
         }
     }
 
@@ -315,10 +321,9 @@ public class ControlActivity extends Activity implements SensorEventListener {
         try {
             Socket clientSocket = getSocket();
             DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-
             outToServer.writeBytes(getString(R.string.msg_simulation) + '\n');
-            outToServer.writeBytes(userInput + "" + '\n');
 
+            outToServer.writeBytes(userInput + "" + '\n');
             if (userInput == 1) {
                 Toast.makeText(this, getString(R.string.toast_simulationStarted), Toast.LENGTH_SHORT).show();
             } else if (userInput == 2) {
@@ -339,7 +344,6 @@ public class ControlActivity extends Activity implements SensorEventListener {
 
             outToServer.writeBytes(tiltLeftRight + "" + '\n');
             outToServer.writeBytes(tiltUpDown + "" + '\n');
-            sentZeroMovementDataToStopRobotArmMovement=false;
         } catch (SocketException e) {
             TextView textConnStatus = (TextView) findViewById(R.id.data_connStatus);
             textConnStatus.setText(R.string.text_disconnected);

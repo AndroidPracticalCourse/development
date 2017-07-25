@@ -180,7 +180,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
             android:layout_marginEnd="40dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="50dp"
             android:orientation="vertical" >
 
             <LinearLayout
@@ -221,7 +221,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textSize="20sp"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/blue"
                     android:textAlignment="center"
                     android:textStyle="bold" />
 
@@ -231,7 +231,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textSize="20sp"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/blue"
                     android:textAlignment="center"
                     android:textStyle="bold" />
 
@@ -257,39 +257,39 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
+        android:layout_marginStart="35dp"
+        android:layout_marginEnd="35dp"
         android:layout_weight="0.9" >
 
         <ImageButton
             android:id="@+id/btn_controlLeft"
             android:src="@drawable/ic_arrow_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="80dp"/>
+            android:layout_marginBottom="100dp" />
 
         <ImageButton
             android:id="@+id/btn_controlDown"
             android:src="@drawable/ic_arrow_down"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_toEndOf="@id/btn_controlLeft"
             android:layout_alignBottom="@id/btn_controlLeft" />
 
         <ImageButton
             android:id="@+id/btn_controlUp"
             android:src="@drawable/ic_arrow_up"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_above="@id/btn_controlDown"
             android:layout_alignStart="@+id/btn_controlDown" />
 
         <ImageButton
             android:id="@+id/btn_controlRight"
             android:src="@drawable/ic_arrow_right"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignBottom="@+id/btn_controlDown"
             android:layout_toEndOf="@+id/btn_controlDown" />
 
@@ -300,7 +300,7 @@
             android:layout_alignBottom="@id/btn_controlLeft"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
-            android:text="HOLD TO \nGRAB"
+            android:text="@string/text_holdToGrab"
             android:textSize="10sp"
             android:textColor="@android:color/white"
             android:background="@drawable/button_round" />

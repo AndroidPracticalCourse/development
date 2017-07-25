@@ -10,8 +10,8 @@ public class Accelerometer {
     private SensorEvent event;
     private long lastUpdateTime;
 
-    int tiltLeftRight = 0;
-    int tiltUpDown = 0;
+    private int tiltLeftRight = 0;
+    private int tiltUpDown = 0;
 
     public Accelerometer(SensorEvent event, long lastUpdateTime) {
         this.event = event;
@@ -33,7 +33,7 @@ public class Accelerometer {
             g[1] = (float) (g[1] / norm_Of_g);
             g[2] = (float) (g[2] / norm_Of_g);
 
-            tiltLeftRight = (int) Math.round(Math.toDegrees(Math.atan2(g[0], g[2]))) * -1;
+            tiltLeftRight = (int) Math.round(Math.toDegrees(Math.atan2(g[0], g[2])));
             tiltUpDown = (int) (Math.round(Math.toDegrees(Math.atan2(g[1], g[2]))));
             //System.out.println("interval = " + interval + ", tiltLeftRight = " + tiltLeftRight + ", tiltUpDown = " + tiltUpDown);
         }

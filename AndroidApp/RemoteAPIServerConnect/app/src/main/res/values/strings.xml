@@ -31,12 +31,12 @@
     <string name="text_sensor">SENSOR</string>
     <string name="text_button">BUTTON</string>
     <string name="text_simulation">SIMULATION</string>
+    <string name="text_holdToGrab">HOLD TO \nGRAB</string>
 
     <string name="msg_simulation">SIMULATION</string>
     <string name="msg_movementdata">MOVEMENTDATA</string>
     <string name="msg_movementdataviabutton">MOVEMENTDATAVIABUTTON</string>
     <string name="msg_gripperdata">GRIPPERDATA</string>
-    <string name="title_activity_about_ui">AboutUI</string>
 
     <string name="toast_simulationStarted">Simulation started</string>
     <string name="toast_simulationPaused">Simulation paused</string>
