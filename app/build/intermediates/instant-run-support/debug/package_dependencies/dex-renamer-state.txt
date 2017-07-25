@@ -1,0 +1,7 @@
+#Thu Jul 20 21:01:11 CEST 2017
+base.0=C\:\\Users\\bauer\\Documents\\uni\\android_praktikum\\gitrep\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\constraint-layout-solver-1.0.2_e2b5f0ebdede94d89718a215413efa6996358ddd
+renamed.1=classes.dex
+renamed.0=classes2.dex
+file.1=C\:\\Users\\bauer\\Documents\\uni\\android_praktikum\\gitrep\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\classes_f5901cc747d570c4cae2fd46c3f81abd45d731a5\\classes.dex
+base.1=C\:\\Users\\bauer\\Documents\\uni\\android_praktikum\\gitrep\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\classes_f5901cc747d570c4cae2fd46c3f81abd45d731a5
+file.0=C\:\\Users\\bauer\\Documents\\uni\\android_praktikum\\gitrep\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\constraint-layout-solver-1.0.2_e2b5f0ebdede94d89718a215413efa6996358ddd\\classes.dex

@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="output"><source path="C:\Users\bauer\.android\build-cache\36be5717e6d90971aec8bed2ff075bdaa84735ed\output\assets"/></dataSet><dataSet config="main"><source path="C:\Users\bauer\Documents\uni\android_praktikum\gitrep\app\src\main\assets"/><source path="C:\Users\bauer\Documents\uni\android_praktikum\gitrep\app\build\generated\assets\shaders\debug"/></dataSet><dataSet config="debug"><source path="C:\Users\bauer\Documents\uni\android_praktikum\gitrep\app\src\debug\assets"/></dataSet></merger>
