@@ -79,7 +79,7 @@ public class Server implements Runnable {
     private void receiveMovementData(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException {
     	int tiltLeftRight = Integer.parseInt(inFromClient.readLine());
         int tiltUpDown = Integer.parseInt(inFromClient.readLine());
-        System.out.println("tiltLeftRight = " + tiltLeftRight + ", tiltUpDown = " + tiltUpDown);
+        //System.out.println("tiltLeftRight = " + tiltLeftRight + ", tiltUpDown = " + tiltUpDown);
 
         // Configurable threshold values to adjust the velocity scale
         int threshold1 = 15;
@@ -149,15 +149,17 @@ public class Server implements Runnable {
         // 0 for opening, 1 for closing
         vrep.simxSetIntegerSignal(clientID, "closeGripper", gripperStatus, remoteApi.simx_opmode_oneshot);
 
-        if (gripperStatus == 1) { // if the gripper is being closed, get the colour of the object
-            getSensorImageData();
-        }
+        int[] rgbValues = getSensorImageData(gripperStatus);
+        System.out.println("rgbValues = " + rgbValues[0] + ", " + rgbValues[1] + ", " + rgbValues[2]);
+        outToClient.writeBytes(rgbValues[0] + "" + '\n');
+        outToClient.writeBytes(rgbValues[1] + "" + '\n');
+        outToClient.writeBytes(rgbValues[2] + "" + '\n');
     }
 
-    private void getSensorImageData() {
+    private int[] getSensorImageData(int gripperStatus) {
         int res = 1; // resolution of the Sensor is 1x1 pixel
         char[] imarray = new char[3];
-        int r, g, b;
+        int[] rgbValues = {-1, -1, -1};
         CharWA image = new CharWA(res * res * 3);
         IntWA resolution = new IntWA(2);
 
@@ -165,19 +167,20 @@ public class Server implements Runnable {
         vrep.simxGetObjectHandle(clientID, "Vision_sensor", sensorHandle, vrep.simx_opmode_oneshot_wait);
         vrep.simxGetVisionSensorImage(clientID, sensorHandle.getValue(), resolution, image, 0, vrep.simx_opmode_streaming);
         
-        while (vrep.simxGetConnectionId(clientID) != -1) {
+        if (gripperStatus == 1) {
             // Get sensor image through API
             vrep.simxGetVisionSensorImage(clientID, sensorHandle.getValue(), resolution, image, 0, vrep.simx_opmode_buffer);
             imarray = image.getArray();
             // Assign RGB integer values via typecast of char
-            r = (int) imarray[0];
-            g = (int) imarray[1];
-            b = (int) imarray[2];
+            rgbValues[0] = (int) imarray[0];
+            rgbValues[1] = (int) imarray[1];
+            rgbValues[2] = (int) imarray[2];
             //TBD Process the colour infos 
-            System.out.printf("Red: %d  Green:%d  Blue:%d \n", r,g,b);
+            System.out.printf("Red: %d  Green:%d  Blue:%d \n", rgbValues[0], rgbValues[1], rgbValues[2]);
             //Thread.sleep(50);
-             
          }
+
+        return rgbValues;
     }
 
 }

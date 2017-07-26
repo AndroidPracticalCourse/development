@@ -3,6 +3,7 @@ package tumandroidcourse2017.remoteapiserverconnect;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -17,8 +18,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -31,6 +34,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
     // Widgets and status variables
     private TextView mTextTiltLeftRight;
     private TextView mTextTiltUpDown;
+    private TextView mTextObjectColor;
     private ImageButton mButtonControlLeft;
     private ImageButton mButtonControlDown;
     private ImageButton mButtonControlUp;
@@ -126,6 +130,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
         // Received data
         mTextTiltLeftRight = (TextView) findViewById(R.id.data_tiltLeftRight);
         mTextTiltUpDown = (TextView) findViewById(R.id.data_tiltUpDown);
+        mTextObjectColor = (TextView) findViewById(R.id.data_colorObject);
 
         // Button control settings
         mButtonControlLeft = (ImageButton) findViewById(R.id.btn_controlLeft);
@@ -373,6 +378,27 @@ public class ControlActivity extends Activity implements SensorEventListener {
             outToServer.writeBytes(getString(R.string.msg_gripperdata) + '\n');
 
             outToServer.writeBytes(gripperStatus + "" + '\n');
+
+            if (gripperStatus == 1) { // close gripper
+                receiveSensorImageData();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void receiveSensorImageData() {
+        try {
+            Socket clientSocket = getSocket();
+            BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            int r = Integer.parseInt(inFromServer.readLine());
+            int g = Integer.parseInt(inFromServer.readLine());
+            int b = Integer.parseInt(inFromServer.readLine());
+
+            int color = Color.rgb(r, g, b);
+            mTextObjectColor.setText(r + ", " + g + ", " + b);
+            // if (r != -1 && g != -1 && b != -1) {
+            mTextObjectColor.setTextColor(color);
         } catch (IOException e) {
             e.printStackTrace();
         }
