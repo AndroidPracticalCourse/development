@@ -111,8 +111,8 @@ public class ControlActivity extends Activity implements SensorEventListener {
                     isSensorControlEnabled = false;
                     toggleControlMode.setText(getString(R.string.text_button));
                     Toast.makeText(ControlActivity.this, getString(R.string.toast_buttonModeEnabled), Toast.LENGTH_SHORT).show();
-                    stopSensors();
                     processAccelerometerData(); // send a last (0,0) to stop the movement of the arm
+                    stopSensors();
                 } else {
                     isSensorControlEnabled = true;
                     toggleControlMode.setText(getString(R.string.text_sensor));
@@ -305,8 +305,8 @@ public class ControlActivity extends Activity implements SensorEventListener {
 
             // when the control mode is switched to 'Button', send zeroes to stop the arm movement
             if (!isSensorControlEnabled) {
-                tiltLeftRight = 0;
-                tiltUpDown = 0;
+                tiltLeftRight = 1;
+                tiltUpDown = 1;
             }
 
             sendMovementData();

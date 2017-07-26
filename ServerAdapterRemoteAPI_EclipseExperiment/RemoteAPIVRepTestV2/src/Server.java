@@ -123,12 +123,6 @@ public class Server implements Runnable {
         }
     }
 
-    private void receiveGripperData(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException {
-        int gripperStatus = Integer.parseInt(inFromClient.readLine());
-        // 0 for opening, 1 for closing
-        vrep.simxSetIntegerSignal(clientID, "closeGripper", gripperStatus, remoteApi.simx_opmode_oneshot);
-    }
-    
     private void receiveMovementDataViaButton(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException{
     	String command = inFromClient.readLine();
     	System.out.println(command);
@@ -148,6 +142,42 @@ public class Server implements Runnable {
     		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0"), remoteApi.simx_opmode_oneshot);
     		vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("0"), remoteApi.simx_opmode_oneshot);
     	}
+    }
+
+    private void receiveGripperData(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException {
+        int gripperStatus = Integer.parseInt(inFromClient.readLine());
+        // 0 for opening, 1 for closing
+        vrep.simxSetIntegerSignal(clientID, "closeGripper", gripperStatus, remoteApi.simx_opmode_oneshot);
+
+        if (gripperStatus == 1) { // if the gripper is being closed, get the colour of the object
+            getSensorImageData();
+        }
+    }
+
+    private void getSensorImageData() {
+        int res = 1; // resolution of the Sensor is 1x1 pixel
+        char[] imarray = new char[3];
+        int r, g, b;
+        CharWA image = new CharWA(res * res * 3);
+        IntWA resolution = new IntWA(2);
+
+        IntW sensorHandle = new IntW(0);
+        vrep.simxGetObjectHandle(clientID, "Vision_sensor", sensorHandle, vrep.simx_opmode_oneshot_wait);
+        vrep.simxGetVisionSensorImage(clientID, sensorHandle.getValue(), resolution, image, 0, vrep.simx_opmode_streaming);
+        
+        while (vrep.simxGetConnectionId(clientID) != -1) {
+            // Get sensor image through API
+            vrep.simxGetVisionSensorImage(clientID, sensorHandle.getValue(), resolution, image, 0, vrep.simx_opmode_buffer);
+            imarray = image.getArray();
+            // Assign RGB integer values via typecast of char
+            r = (int) imarray[0];
+            g = (int) imarray[1];
+            b = (int) imarray[2];
+            //TBD Process the colour infos 
+            System.out.printf("Red: %d  Green:%d  Blue:%d \n", r,g,b);
+            //Thread.sleep(50);
+             
+         }
     }
 
 }

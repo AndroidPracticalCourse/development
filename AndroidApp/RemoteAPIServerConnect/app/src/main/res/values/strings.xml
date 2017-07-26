@@ -8,7 +8,7 @@
 
     <string name="text_tooltip">Ensure that the Server Adapter and V-REP with the loaded scene file are open.</string>
     <string name="text_ip">IP Address</string>
-    <string name="input_ip">10.177.3.173</string>
+    <string name="input_ip">10.177.2.56</string>
     <string name="text_port">Port</string>
     <string name="input_port">6789</string>
     <string name="text_connect">Connect</string>
