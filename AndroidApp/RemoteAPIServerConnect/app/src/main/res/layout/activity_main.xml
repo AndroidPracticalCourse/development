@@ -14,106 +14,119 @@
         android:layout_alignParentStart="true">
     </com.nhaarman.supertooltips.ToolTipRelativeLayout>
 
-    <TextView
-        android:id="@+id/text_vrep"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:layout_centerHorizontal="true"
-        android:text="@string/text_vrep"
-        android:textAlignment="center"
-        android:textColor="@android:color/black"
-        android:textSize="50sp"
-        android:textStyle="bold"
-        android:onClick="onClickHeader" />
-
-    <TextView
-        android:id="@+id/text_controller"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/text_vrep"
-        android:layout_marginTop="10dp"
-        android:layout_centerHorizontal="true"
-        android:text="@string/text_controller"
-        android:textAlignment="center"
-        android:textColor="@android:color/black"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        android:onClick="onClickHeader" />
-
-    <Button
-        android:id="@+id/button_connect"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="100dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:background="@drawable/button"
-        android:text="@string/text_connect"
-        android:textColor="@android:color/white"
-        android:onClick="onClickConnectButton" />
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/img_help"
-        android:src="@drawable/ic_help"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_above="@id/button_connect"
-        android:layout_marginBottom="160dp"
-        android:layout_alignEnd="@id/button_connect" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/img_ipAddress"
-        android:src="@drawable/ic_laptop_black"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/button_connect"
-        android:layout_marginBottom="100dp"
-        android:layout_alignStart="@id/button_connect" />
+            <TextView
+                android:id="@+id/text_vrep"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:layout_centerHorizontal="true"
+                android:text="@string/text_vrep"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="50sp"
+                android:textStyle="bold"
+                android:onClick="onClickHeader" />
 
-    <EditText
-        android:id="@+id/input_ipAddress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/img_ipAddress"
-        android:layout_alignTop="@id/img_ipAddress"
-        android:layout_alignBottom="@id/img_ipAddress"
-        android:layout_alignEnd="@id/button_connect"
-        android:layout_marginStart="20dp"
-        android:background="@android:color/transparent"
-        android:hint="@string/text_ip"
-        android:text="@string/input_ip"
-        android:textColorHint="@color/gray"
-        android:textColor="@android:color/black"
-        android:ems="10"
-        android:inputType="phone" />
+            <TextView
+                android:id="@+id/text_controller"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_vrep"
+                android:layout_marginTop="10dp"
+                android:layout_centerHorizontal="true"
+                android:text="@string/text_controller"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:onClick="onClickHeader" />
 
-    <ImageView
-        android:id="@+id/img_port"
-        android:src="@drawable/ic_port"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/button_connect"
-        android:layout_marginBottom="50dp"
-        android:layout_alignStart="@id/img_ipAddress" />
+            <ImageView
+                android:id="@+id/img_help"
+                android:src="@drawable/ic_help"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_below="@id/text_controller"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="120dp"
+                android:layout_marginEnd="40dp" />
 
-    <EditText
-        android:id="@+id/input_port"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/img_port"
-        android:layout_alignTop="@id/img_port"
-        android:layout_alignBottom="@id/img_port"
-        android:layout_alignStart="@id/input_ipAddress"
-        android:layout_alignEnd="@id/button_connect"
-        android:background="@android:color/transparent"
-        android:hint="@string/text_port"
-        android:text="@string/input_port"
-        android:textColorHint="@color/gray"
-        android:textColor="@android:color/black"
-        android:ems="10"
-        android:inputType="number" />
+            <ImageView
+                android:id="@+id/img_ipAddress"
+                android:src="@drawable/ic_laptop_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/img_help"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="40dp" />
 
+            <EditText
+                android:id="@+id/input_ipAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/img_ipAddress"
+                android:layout_alignTop="@id/img_ipAddress"
+                android:layout_alignBottom="@id/img_ipAddress"
+                android:layout_alignEnd="@id/img_help"
+                android:layout_marginStart="20dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/text_ip"
+                android:text="@string/input_ip"
+                android:textColorHint="@color/gray"
+                android:textColor="@android:color/black"
+                android:ems="10"
+                android:inputType="phone" />
+
+            <ImageView
+                android:id="@+id/img_port"
+                android:src="@drawable/ic_port"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/img_ipAddress"
+                android:layout_marginTop="30dp"
+                android:layout_alignStart="@id/img_ipAddress" />
+
+            <EditText
+                android:id="@+id/input_port"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/img_port"
+                android:layout_alignTop="@id/img_port"
+                android:layout_alignBottom="@id/img_port"
+                android:layout_alignStart="@id/input_ipAddress"
+                android:layout_alignEnd="@id/img_help"
+                android:background="@android:color/transparent"
+                android:hint="@string/text_port"
+                android:text="@string/input_port"
+                android:textColorHint="@color/gray"
+                android:textColor="@android:color/black"
+                android:ems="10"
+                android:inputType="number" />
+
+            <Button
+                android:id="@+id/button_connect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/img_port"
+                android:layout_alignStart="@id/img_port"
+                android:layout_alignEnd="@id/img_help"
+                android:layout_marginTop="60dp"
+                android:background="@drawable/button"
+                android:text="@string/text_connect"
+                android:textColor="@android:color/white"
+                android:onClick="onClickConnectButton" />
+
+
+        </RelativeLayout>
+
+    </ScrollView>
 
 </RelativeLayout>
