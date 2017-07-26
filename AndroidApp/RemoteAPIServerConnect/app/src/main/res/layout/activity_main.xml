@@ -22,16 +22,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <ImageView
+                android:id="@+id/img_logo"
+                android:src="@mipmap/ic_launcher_gripper"
+                android:layout_width="@dimen/main_logoDimen"
+                android:layout_height="@dimen/main_logoDimen"
+                android:layout_marginTop="@dimen/main_topToLogo"
+                android:layout_centerHorizontal="true" />
+
             <TextView
                 android:id="@+id/text_vrep"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
+                android:layout_below="@id/img_logo"
+                android:layout_marginTop="@dimen/main_logoToHeader"
                 android:layout_centerHorizontal="true"
                 android:text="@string/text_vrep"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
-                android:textSize="50sp"
+                android:textSize="@dimen/main_header1FontSize"
                 android:textStyle="bold"
                 android:onClick="onClickHeader" />
 
@@ -45,19 +54,19 @@
                 android:text="@string/text_controller"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
-                android:textSize="25sp"
+                android:textSize="@dimen/main_header2FontSize"
                 android:textStyle="bold"
                 android:onClick="onClickHeader" />
 
             <ImageView
                 android:id="@+id/img_help"
                 android:src="@drawable/ic_help"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/gen_smallIcon"
+                android:layout_height="@dimen/gen_smallIcon"
                 android:layout_below="@id/text_controller"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="120dp"
-                android:layout_marginEnd="40dp" />
+                android:layout_marginTop="@dimen/main_headerToTooltip"
+                android:layout_marginEnd="@dimen/gen_border" />
 
             <ImageView
                 android:id="@+id/img_ipAddress"
@@ -65,8 +74,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/img_help"
-                android:layout_marginTop="30dp"
-                android:layout_marginStart="40dp" />
+                android:layout_marginTop="@dimen/main_tooltipToInputFields"
+                android:layout_marginStart="@dimen/gen_border" />
 
             <EditText
                 android:id="@+id/input_ipAddress"
@@ -76,10 +85,9 @@
                 android:layout_alignTop="@id/img_ipAddress"
                 android:layout_alignBottom="@id/img_ipAddress"
                 android:layout_alignEnd="@id/img_help"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="@dimen/main_inputFieldsSpacing"
                 android:background="@android:color/transparent"
                 android:hint="@string/text_ip"
-                android:text="@string/input_ip"
                 android:textColorHint="@color/gray"
                 android:textColor="@android:color/black"
                 android:ems="10"
@@ -91,7 +99,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/img_ipAddress"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="@dimen/main_inputFieldsSpacing"
                 android:layout_alignStart="@id/img_ipAddress" />
 
             <EditText
@@ -105,7 +113,6 @@
                 android:layout_alignEnd="@id/img_help"
                 android:background="@android:color/transparent"
                 android:hint="@string/text_port"
-                android:text="@string/input_port"
                 android:textColorHint="@color/gray"
                 android:textColor="@android:color/black"
                 android:ems="10"
@@ -118,12 +125,11 @@
                 android:layout_below="@id/img_port"
                 android:layout_alignStart="@id/img_port"
                 android:layout_alignEnd="@id/img_help"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="@dimen/main_inputFieldsToButton"
                 android:background="@drawable/button"
                 android:text="@string/text_connect"
                 android:textColor="@android:color/white"
                 android:onClick="onClickConnectButton" />
-
 
         </RelativeLayout>
 

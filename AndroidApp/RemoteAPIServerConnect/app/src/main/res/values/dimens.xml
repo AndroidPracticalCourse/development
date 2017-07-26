@@ -1,3 +1,22 @@
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
+
+    <!-- General -->
+
+    <dimen name="gen_border">40dp</dimen>
+    <dimen name="gen_smallIcon">20dp</dimen>
+
+    <!-- MainActivity -->
+
+    <dimen name="main_logoDimen">60dp</dimen>
+    <dimen name="main_topToLogo">40dp</dimen>
+    <dimen name="main_logoToHeader">20dp</dimen>
+    <dimen name="main_header1FontSize">50sp</dimen>
+    <dimen name="main_header2FontSize">20sp</dimen>
+    <dimen name="main_headerToTooltip">110dp</dimen>
+    <dimen name="main_tooltipToInputFields">20dp</dimen>
+    <dimen name="main_inputFieldsSpacing">20dp</dimen>
+    <dimen name="main_inputFieldsToButton">50dp</dimen>
+
+
+
 </resources>

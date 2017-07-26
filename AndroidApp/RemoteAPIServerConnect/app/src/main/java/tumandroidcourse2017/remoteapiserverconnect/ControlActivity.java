@@ -34,7 +34,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
     // Widgets and status variables
     private TextView mTextTiltLeftRight;
     private TextView mTextTiltUpDown;
-    private TextView mTextObjectColor;
+    private View mTextObjectColor;
     private ImageButton mButtonControlLeft;
     private ImageButton mButtonControlDown;
     private ImageButton mButtonControlUp;
@@ -130,7 +130,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
         // Received data
         mTextTiltLeftRight = (TextView) findViewById(R.id.data_tiltLeftRight);
         mTextTiltUpDown = (TextView) findViewById(R.id.data_tiltUpDown);
-        mTextObjectColor = (TextView) findViewById(R.id.data_colorObject);
+        mTextObjectColor = (View) findViewById(R.id.data_colorObject);
 
         // Button control settings
         mButtonControlLeft = (ImageButton) findViewById(R.id.btn_controlLeft);
@@ -396,9 +396,9 @@ public class ControlActivity extends Activity implements SensorEventListener {
             int b = Integer.parseInt(inFromServer.readLine());
 
             int color = Color.rgb(r, g, b);
-            mTextObjectColor.setText(r + ", " + g + ", " + b);
-            // if (r != -1 && g != -1 && b != -1) {
-            mTextObjectColor.setTextColor(color);
+            mTextObjectColor.setBackgroundColor(color);
+            //mTextObjectColor.setText(r + ", " + g + ", " + b);
+            //mTextObjectColor.setTextColor(color);
         } catch (IOException e) {
             e.printStackTrace();
         }
