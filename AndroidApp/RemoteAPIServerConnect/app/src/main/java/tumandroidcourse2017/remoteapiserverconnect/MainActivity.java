@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.StrictMode;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,7 +25,7 @@ import java.util.regex.Pattern;
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocket;
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.setSocket;
 
-public class MainActivity extends Activity implements View.OnClickListener, ToolTipView.OnToolTipViewClickedListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, ToolTipView.OnToolTipViewClickedListener {
 
     private static final Pattern PATTERN = Pattern.compile(
             "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
@@ -36,6 +39,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Tool
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Setup actionbar
+        setTitle("Connect to Server Adapter");
 
         // Setup header text font
         TextView textVrep = (TextView) findViewById(R.id.text_vrep);
@@ -52,6 +58,23 @@ public class MainActivity extends Activity implements View.OnClickListener, Tool
         if (SDK_INT > 8) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
+        }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.global_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+        switch (id){
+            case R.id.aboutMenu:
+                Intent aboutui = new Intent(this, AboutActivity.class);
+                startActivity(aboutui);
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
     }
 
