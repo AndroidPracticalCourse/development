@@ -1,7 +1,9 @@
 package tumandroidcourse2017.remoteapiserverconnect;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.StrictMode;
 import android.os.Bundle;
@@ -35,8 +37,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ToolTipRelativeLayout mToolTipRelativeLayout;
     private ToolTipView mHelpToolTipView;
 
-    private boolean isConnectedToServerAdapter=false;
-
+    SharedPreferences sharedpreferences;
+    EditText editTextIP;
+    EditText editTextPort;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +64,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
+
+        //load saved ip and port
+        editTextIP = (EditText) findViewById(R.id.input_ipAddress);
+        editTextPort = (EditText) findViewById(R.id.input_port);
+        SharedPreferences prefs = getSharedPreferences("IPandPORT", MODE_PRIVATE);
+        String restoredText = prefs.getString("IP", null);
+        if (restoredText != null) {
+            editTextIP.setText(prefs.getString("IP",""));
+            editTextPort.setText(prefs.getString("Port",""));
+        }
+
     }
 
     public boolean onCreateOptionsMenu(Menu menu){
@@ -121,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
     // =============================================================
     //                      HELPER METHODS
     // =============================================================
@@ -137,19 +152,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void doConnect(){
-        EditText editTextIP = (EditText) findViewById(R.id.input_ipAddress);
-        EditText editTextPort = (EditText) findViewById(R.id.input_port);
+         editTextIP = (EditText) findViewById(R.id.input_ipAddress);
+         editTextPort = (EditText) findViewById(R.id.input_port);
         String ip = editTextIP.getText().toString();
         int port = Integer.parseInt(editTextPort.getText().toString());
         Toast.makeText(MainActivity.this, "Connecting to " + ip + ":" + port, Toast.LENGTH_SHORT).show();
-
+        sharedpreferences = getSharedPreferences("IPandPORT", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString("IP", ip);
+        editor.putString("Port", ""+port);
+        editor.commit();
         if (validate(ip)) {
             try {
                 Socket clientSocket;
-                if(isConnectedToServerAdapter==false){
-                    setSocket(new Socket(ip, port));
-                    isConnectedToServerAdapter=true;
-                }
+                setSocket(new Socket(ip, port));
                 clientSocket = getSocket();
 
                 BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -159,9 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (serverResponse.equals(getString(R.string.msg_remoteApiConnectAccept))) {
                     String id = inFromServer.readLine();
-                    System.out.println("id = " + id);
                     int clientID = Integer.parseInt(id);
-                    System.out.println("clientID = " + clientID);
                     Toast.makeText(MainActivity.this, "Connection to " + ip + ":" + port + " accepted", Toast.LENGTH_SHORT).show();
 
                     Intent controlui1 = new Intent(this, ControlActivity.class);
