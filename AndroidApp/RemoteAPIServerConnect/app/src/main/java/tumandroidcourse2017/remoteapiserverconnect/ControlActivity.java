@@ -11,6 +11,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,7 +26,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.net.SocketException;
+
 
 import tumandroidcourse2017.remoteapiserverconnect.sensors.Accelerometer;
 
@@ -62,7 +63,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        
+
         initWidgets();
         startSensors();
     }
@@ -440,4 +441,6 @@ public class ControlActivity extends Activity implements SensorEventListener {
             showErrorDialog("Failure to receive: color data");
         }
     }
+
+
 }

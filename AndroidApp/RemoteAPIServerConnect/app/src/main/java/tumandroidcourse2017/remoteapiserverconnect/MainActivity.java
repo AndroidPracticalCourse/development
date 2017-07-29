@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ToolTipRelativeLayout mToolTipRelativeLayout;
     private ToolTipView mHelpToolTipView;
 
+    private boolean isConnectedToServerAdapter=false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,16 +146,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (validate(ip)) {
             try {
                 Socket clientSocket;
-                setSocket(new Socket(ip, port));
+                if(isConnectedToServerAdapter==false){
+                    setSocket(new Socket(ip, port));
+                    isConnectedToServerAdapter=true;
+                }
                 clientSocket = getSocket();
 
                 BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-                System.out.println("Writing some bytes");
                 outToServer.writeBytes(getString(R.string.msg_remoteApiConnectReq) + '\n');
-                System.out.println("Bytes written");
                 String serverResponse = inFromServer.readLine();
-                System.out.println("Server response read");
 
                 if (serverResponse.equals(getString(R.string.msg_remoteApiConnectAccept))) {
                     String id = inFromServer.readLine();
