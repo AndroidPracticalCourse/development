@@ -44,4 +44,7 @@
     <string name="toast_buttonModeEnabled">Button control mode enabled</string>
     <string name="toast_sensorModeEnabled">Sensor control mode enabled</string>
 
+    <string name="dialog_connection_error_title">Connection Error</string>
+    <string name="dialog_connection_error_connect"></string>
+
 </resources>

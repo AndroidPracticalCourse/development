@@ -1,6 +1,8 @@
 package tumandroidcourse2017.remoteapiserverconnect;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -40,6 +42,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
     private ImageButton mButtonControlUp;
     private ImageButton mButtonControlRight;
     private boolean isSensorControlEnabled = true;
+    private boolean isConnectionError=false;
 
     // Sensors
     private SensorManager mSensorManager;
@@ -209,6 +212,37 @@ public class ControlActivity extends Activity implements SensorEventListener {
     }
 
     // =============================================================
+    //                  CONNECTION PROBLEM DIALOG
+    // =============================================================
+
+    private void showErrorDialog(String ErrorMsg){
+        isConnectionError=true;
+        TextView textConnStatus = (TextView) findViewById(R.id.data_connStatus);
+        textConnStatus.setText(R.string.text_disconnected);
+        textConnStatus.setTextColor(getResources().getColor(R.color.red));
+
+        AlertDialog alertDialog = new AlertDialog.Builder(ControlActivity.this).create();
+        alertDialog.setTitle("Connection Error!");
+        alertDialog.setMessage(ErrorMsg);
+        // Alert dialog button
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "EXIT",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Alert dialog action goes here
+                        // onClick button code here
+                        dialog.dismiss();// use dismiss to cancel alert dialog
+                        closeActivity();
+                    }
+                });
+        alertDialog.show();
+
+    }
+
+    private void closeActivity(){
+        this.finish();
+    }
+
+    // =============================================================
     //                  ACTIVITY CLASS METHODS
     // =============================================================
 
@@ -313,8 +347,10 @@ public class ControlActivity extends Activity implements SensorEventListener {
                 tiltLeftRight = 1;
                 tiltUpDown = 1;
             }
+            if(!isConnectionError){
+                sendMovementData();
+            }
 
-            sendMovementData();
         }
     }
 
@@ -338,6 +374,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            showErrorDialog("Failure to transmit: Simulation data");
         }
     }
 
@@ -349,12 +386,9 @@ public class ControlActivity extends Activity implements SensorEventListener {
 
             outToServer.writeBytes(tiltLeftRight + "" + '\n');
             outToServer.writeBytes(tiltUpDown + "" + '\n');
-        } catch (SocketException e) {
-            TextView textConnStatus = (TextView) findViewById(R.id.data_connStatus);
-            textConnStatus.setText(R.string.text_disconnected);
-            textConnStatus.setTextColor(getResources().getColor(R.color.red));
-        } catch (IOException e) {
+        }  catch (IOException e) {
             e.printStackTrace();
+            showErrorDialog("Failure to transmit: sensor data");
         }
     }
 
@@ -367,6 +401,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
                 outToServer.writeBytes(direction + '\n');
             } catch (IOException e) {
                 e.printStackTrace();
+                showErrorDialog("Failure to transmit: movement button data");
             }
         }
     }
@@ -384,6 +419,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            showErrorDialog("Failure to transmit: Grip data");
         }
     }
 
@@ -401,6 +437,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
             //mTextObjectColor.setTextColor(color);
         } catch (IOException e) {
             e.printStackTrace();
+            showErrorDialog("Failure to receive: color data");
         }
     }
 }
