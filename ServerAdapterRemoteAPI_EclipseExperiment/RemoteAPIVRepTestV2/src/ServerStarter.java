@@ -1,15 +1,68 @@
+import java.nio.charset.Charset;
+import java.io.*;
 import java.util.Scanner;
 
 import coppelia.*;
 
 public class ServerStarter {
-	private static String IP="127.0.0.1";
-    private static int Port=19997;
-    private static int menuchoice;
+	private static String IP;
+    private static int Port;
+    private static String menuchoice;
 	public static void main(String[] args){
+		String line;
+		try {
+		    InputStream fis = new FileInputStream("serveradapterconfig.txt");
+		    InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
+		    BufferedReader br = new BufferedReader(isr);
+		
+		    	br.readLine();
+		    	IP=br.readLine();
+		    	try{
+		    		Port=Integer.parseInt(br.readLine());
+		    	}
+		    	catch(NumberFormatException e){
+		    		System.out.println("Invalid port format! Please change port in serveradapterconfig.txt");
+		    		Port=19997;
+		    	}
+		    	
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			BufferedWriter bw;
+			FileWriter fw;
+			IP="127.0.0.1";
+			Port=19997;
+			try {
+				fw = new FileWriter("serveradapterconfig.txt");
+				bw = new BufferedWriter(fw);
+				bw.write("Edit IP and Port of V-REP here. Second line is IP. Third line is Port.");
+				bw.newLine();
+				bw.write("127.0.0.1");
+				bw.newLine();
+				bw.write("19997");
+				bw.flush();
+				bw.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				System.out.println("Error! Cannot create serveradapterconfig.txt");
+				e1.printStackTrace();
+			}
+			
+			System.out.println("serveradapterconfig.txt is not found. Created with default value of 127.0.0.1:19997");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			IP="127.0.0.1";
+			Port=19997;
+			System.out.println("serveradapterconfig.txt is not in right format!");
+			System.out.println("please manually delete it and restart this server adapter.");
+			
+		}
+		
+		
+		
 		remoteApi vrep = new remoteApi();
         vrep.simxFinish(-1); // just in case, close all opened connections
-        System.out.println("Connecting to V-REP via Remote API...");
+        System.out.println("Connecting to V-REP via Remote API on "+IP+":"+Port+"...");
         int clientID = vrep.simxStart(IP,Port,true,true,5000,5);
         System.out.println("ClientID is = "+clientID);
         System.out.println("ConnectionID is = "+vrep.simxGetConnectionId(clientID));
@@ -22,32 +75,52 @@ public class ServerStarter {
     	Thread tsthread = new Thread(ts);
     	tsthread.start();
         Scanner sc = new Scanner(System.in);
+        System.out.println("You can manually type in command in console to interface with V-REP.");
+        System.out.println("For full functionallity, the Android app is required.");
+        System.out.println("1 = Start Simulation");
+        System.out.println("2 = Pause Simulation");
+        System.out.println("3 = Stop Simulation");
+        System.out.println("X = Exit Server Adapter");
+        System.out.println("L = Left");
+        System.out.println("R = Right");
+        System.out.println("U = Up");
+        System.out.println("D = Down");
+        System.out.println("S = Stop");
         while(clientID!=-1){
+        	menuchoice = sc.next();
         	
-        	
-        	System.out.println("You can manually type in command in console to interface with V-REP. Read source code for command.");
-        	menuchoice = sc.nextInt();
-        	
-        	if(menuchoice==1){
+        	if(menuchoice.equals("1")){
                 //vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.01"), remoteApi.simx_opmode_oneshot);
                 //start simulation
                 vrep.simxStartSimulation(clientID, clientID);
         	}
-        	if(menuchoice==2){
+        	if(menuchoice.equals("2")){
                 //vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.0"), remoteApi.simx_opmode_oneshot);
         		//pause simulation
                 vrep.simxPauseSimulation(clientID, clientID);
         	}
-        	if(menuchoice==3){
+        	if(menuchoice.equals("3")){
         		//stop simulation
                 vrep.simxStopSimulation(clientID, clientID);
         	}
-        	if(menuchoice==4){
-        		//vrep.simxReadVisionSensor(clientID, sensorHandle, detectionState, auxValues, operationMode);
-        		vrep.simxReadVisionSensor(clientID, 0, new BoolW(true), new FloatWAA(0), 0);
+        	if(menuchoice.equals("L")){
+        		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.02"), remoteApi.simx_opmode_oneshot);
+        	}
+        	if(menuchoice.equals("R")){
+        		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("-0.02"), remoteApi.simx_opmode_oneshot);
+        	}
+        	if(menuchoice.equals("U")){
+        		vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("0.02"), remoteApi.simx_opmode_oneshot);
+        	}
+        	if(menuchoice.equals("D")){
+        		vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("-0.02"), remoteApi.simx_opmode_oneshot);
+        	}
+        	if(menuchoice.equals("S")){
+        		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0"), remoteApi.simx_opmode_oneshot);
+        		vrep.simxSetFloatSignal(clientID, "moveUpDown", Float.valueOf("0"), remoteApi.simx_opmode_oneshot);
         	}
 
-        	if (menuchoice == 0) {
+        	if (menuchoice.equals("X")) {
                 System.exit(0);
             }
         }

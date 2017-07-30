@@ -157,7 +157,7 @@ public class Server implements Runnable {
 
     private void receiveMovementDataViaButton(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException{
     	String command = inFromClient.readLine();
-    	System.out.println(command);
+    	//System.out.println(command);
     	if(command.equals("L")){
     		vrep.simxSetFloatSignal(clientID, "rotate", Float.valueOf("0.02"), remoteApi.simx_opmode_oneshot);
     	}
@@ -184,7 +184,7 @@ public class Server implements Runnable {
     
     private void sendSenderImageData(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException{
     	int[] rgbValues = getSensorImageData();
-        System.out.println("rgbValues = " + rgbValues[0] + ", " + rgbValues[1] + ", " + rgbValues[2]);
+        //System.out.println("rgbValues = " + rgbValues[0] + ", " + rgbValues[1] + ", " + rgbValues[2]);
         outToClient.writeBytes(rgbValues[0] + "" + '\n');
         outToClient.writeBytes(rgbValues[1] + "" + '\n');
         outToClient.writeBytes(rgbValues[2] + "" + '\n');
