@@ -1,5 +1,8 @@
 package tumandroidcourse2017.remoteapiserverconnect;
 
+import android.util.Log;
+
+import java.io.IOException;
 import java.net.Socket;
 
 /**
@@ -15,5 +18,9 @@ public class SocketHandler {
 
     public static synchronized void setSocket(Socket socket){
         SocketHandler.socket = socket;
+    }
+
+    public static synchronized void unsetSocket(){
+        SocketHandler.socket = null;
     }
 }

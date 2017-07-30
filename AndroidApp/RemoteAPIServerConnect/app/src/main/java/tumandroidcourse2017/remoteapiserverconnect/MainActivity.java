@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocket;
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.setSocket;
+import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.unsetSocket;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, ToolTipView.OnToolTipViewClickedListener {
 
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    // add about to actionbar
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.global_menu, menu);
         return true;
@@ -135,6 +137,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    //disconnect from server adapter when resuming to main activity
+    public void onResume(){
+        super.onResume();
+        unsetSocket();
+    }
 
     // =============================================================
     //                      HELPER METHODS
@@ -156,17 +163,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
          editTextPort = (EditText) findViewById(R.id.input_port);
         String ip = editTextIP.getText().toString();
         int port = Integer.parseInt(editTextPort.getText().toString());
-        Toast.makeText(MainActivity.this, "Connecting to " + ip + ":" + port, Toast.LENGTH_SHORT).show();
+
+        //save ip and port to sharedpreference
         sharedpreferences = getSharedPreferences("IPandPORT", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
+
         editor.putString("IP", ip);
         editor.putString("Port", ""+port);
         editor.commit();
         if (validate(ip)) {
             try {
+                unsetSocket();
+                Toast.makeText(MainActivity.this, "Connecting to " + ip + ":" + port, Toast.LENGTH_SHORT).show();
                 Socket clientSocket;
                 setSocket(new Socket(ip, port));
                 clientSocket = getSocket();
+                clientSocket.setSoTimeout(2000);
 
                 BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
