@@ -72,18 +72,18 @@ public class ControlActivity extends Activity implements SensorEventListener {
     }
 
     //things for repeatedly request color in thread, backgrounded, repeatedly
-    private static boolean ActivityIsActive;
+    private static boolean shouldstartRequestColorThreadRun;
 
     @Override
     public void onStart() {
         super.onStart();
-        ActivityIsActive = true;
+        shouldstartRequestColorThreadRun = true;
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        ActivityIsActive = false;
+        shouldstartRequestColorThreadRun = false;
     }
 
     private void startRequestColorThread(){
@@ -92,7 +92,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
             @Override
             public void run() {
                 //prevent crashing if closing this activity
-                if(ActivityIsActive){
+                if(shouldstartRequestColorThreadRun){
                     requestSensorImageData();
                     receiveSensorImageData();
                     handler.postDelayed(this,500);
@@ -463,6 +463,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
 
         } catch (IOException e) {
             e.printStackTrace();
+            shouldstartRequestColorThreadRun = false;
             showErrorDialog("Failure to transmit: request sensor data");
         }
     }
@@ -482,6 +483,9 @@ public class ControlActivity extends Activity implements SensorEventListener {
         } catch (IOException e) {
             e.printStackTrace();
             showErrorDialog("Failure to receive: color data");
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            showErrorDialog("Received invalid color data");
         }
     }
 
