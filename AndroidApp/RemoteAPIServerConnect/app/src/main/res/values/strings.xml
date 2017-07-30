@@ -37,6 +37,7 @@
     <string name="msg_movementdata">MOVEMENTDATA</string>
     <string name="msg_movementdataviabutton">MOVEMENTDATAVIABUTTON</string>
     <string name="msg_gripperdata">GRIPPERDATA</string>
+    <string name="msg_reqcolordata">REQCOLORDATA</string>
 
     <string name="toast_simulationStarted">Simulation started</string>
     <string name="toast_simulationPaused">Simulation paused</string>
@@ -45,6 +46,6 @@
     <string name="toast_sensorModeEnabled">Sensor control mode enabled</string>
 
     <string name="dialog_connection_error_title">Connection Error</string>
-    <string name="dialog_connection_error_connect"></string>
+
 
 </resources>

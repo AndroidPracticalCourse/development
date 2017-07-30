@@ -12,6 +12,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -58,6 +59,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
     private static final String TAG = ControlActivity.class.getSimpleName();
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,8 +68,38 @@ public class ControlActivity extends Activity implements SensorEventListener {
 
         initWidgets();
         startSensors();
+        startRequestColorThread();
     }
 
+    //things for repeatedly request color in thread, backgrounded, repeatedly
+    private static boolean ActivityIsActive;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ActivityIsActive = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ActivityIsActive = false;
+    }
+
+    private void startRequestColorThread(){
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //prevent crashing if closing this activity
+                if(ActivityIsActive){
+                    requestSensorImageData();
+                    receiveSensorImageData();
+                    handler.postDelayed(this,500);
+                }
+            }
+        }, 500);
+    }
 
     private void initWidgets(){
         // Connection details header
@@ -415,12 +447,21 @@ public class ControlActivity extends Activity implements SensorEventListener {
 
             outToServer.writeBytes(gripperStatus + "" + '\n');
 
-            if (gripperStatus == 1) { // close gripper
-                receiveSensorImageData();
-            }
         } catch (IOException e) {
             e.printStackTrace();
             showErrorDialog("Failure to transmit: Grip data");
+        }
+    }
+
+    private void requestSensorImageData(){
+        try {
+            Socket clientSocket = getSocket();
+            DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+            outToServer.writeBytes(getString(R.string.msg_reqcolordata) + '\n');
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showErrorDialog("Failure to transmit: request sensor data");
         }
     }
 
