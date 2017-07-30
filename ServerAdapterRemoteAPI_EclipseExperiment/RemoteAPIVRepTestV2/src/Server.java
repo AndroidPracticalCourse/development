@@ -15,25 +15,26 @@ public class Server implements Runnable {
 
 	private remoteApi vrep;
 	private int clientID;
-
 	public Server(remoteApi vrep, int clientID) {
 		this.vrep = vrep;
 		this.clientID = clientID;
 	}
-	
+	private ServerSocket welcomeSocket;
 	@Override
 	public void run() {
 		System.out.println("Server thread is running...");  
 		String clientFeedback;
 		try {
-		 	ServerSocket welcomeSocket = new ServerSocket(6789);
+		 	welcomeSocket = new ServerSocket(6789);
+		 	welcomeSocket.setReuseAddress(false);
 		 	Socket connectionSocket = welcomeSocket.accept();
 			BufferedReader inFromClient =
 			    new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 		   	DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-
+		   	connectionSocket.setKeepAlive(false);
 			while (true) {
 			  	String receivedBuffer = inFromClient.readLine();
+			  	//System.out.println(receivedBuffer);
 			  	if (receivedBuffer.equals(MSG_REMOTEAPI_CONNECTREQ)) { // initial connection setup
                     acceptConnectionRequest(outToClient);
 			  	} else if (receivedBuffer.equals(MSG_SIMULATION)) { // commands to start/pause/stop simulation
@@ -49,14 +50,20 @@ public class Server implements Runnable {
                 }  else if (receivedBuffer.equals(MSG_SERVERSHUTDOWN)) { // receive data to control the gripper
                 	System.out.println("Disconnection requested");
                 	System.out.println("Server thread will be terminated");
+                	welcomeSocket.close();
                 	Thread.currentThread().interrupt();
                 	return;
                 }
             }
 		} catch (IOException e ) {
 			//e.printStackTrace();
+			try {
+				welcomeSocket.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			System.out.println(e.toString());
-			System.exit(0);
 		}
 	}
 
@@ -161,7 +168,6 @@ public class Server implements Runnable {
     
     private void sendSenderImageData(BufferedReader inFromClient, DataOutputStream outToClient) throws IOException{
     	int[] rgbValues = getSensorImageData();
-    	System.out.println("abc");
         System.out.println("rgbValues = " + rgbValues[0] + ", " + rgbValues[1] + ", " + rgbValues[2]);
         outToClient.writeBytes(rgbValues[0] + "" + '\n');
         outToClient.writeBytes(rgbValues[1] + "" + '\n');
@@ -188,7 +194,7 @@ public class Server implements Runnable {
             rgbValues[1] = (int) imarray[1];
             rgbValues[2] = (int) imarray[2];
             //TBD Process the colour infos 
-            System.out.printf("Red: %d  Green:%d  Blue:%d \n", rgbValues[0], rgbValues[1], rgbValues[2]);
+            //System.out.printf("Red: %d  Green:%d  Blue:%d \n", rgbValues[0], rgbValues[1], rgbValues[2]);
             //Thread.sleep(50);
          
 

@@ -100,9 +100,11 @@ public class ControlActivity extends Activity implements SensorEventListener {
                     receiveSensorImageData();
                     handler.postDelayed(this,500);
                 }
+
             }
         }, 500);
     }
+    
 
     private void initWidgets(){
         // Connection details header

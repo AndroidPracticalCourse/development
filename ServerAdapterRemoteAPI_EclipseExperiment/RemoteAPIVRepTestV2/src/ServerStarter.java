@@ -17,10 +17,10 @@ public class ServerStarter {
         	System.out.println("ERROR, CANNOT CONNECT TO V-REP! SERVER ADAPTER TERMINATED.");
         	System.exit(0);
         }
-        System.out.println("Starting server thread...");
-    	Server server = new Server(vrep, clientID);
-    	Thread serverthread = new Thread(server);
-    	serverthread.start();
+        System.out.println("Starting ThreadSupervisor thread...");
+        ThreadSupervisor ts = new ThreadSupervisor(vrep, clientID);
+    	Thread tsthread = new Thread(ts);
+    	tsthread.start();
         Scanner sc = new Scanner(System.in);
         while(clientID!=-1){
         	
