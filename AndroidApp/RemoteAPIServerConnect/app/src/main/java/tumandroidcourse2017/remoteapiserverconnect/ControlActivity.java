@@ -361,6 +361,8 @@ public class ControlActivity extends Activity implements SensorEventListener {
             mButtonControlDown.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.blue)));
             mTextTiltLeftRight.setTextColor(getResources().getColor(R.color.lightGray));
             mTextTiltUpDown.setTextColor(getResources().getColor(R.color.lightGray));
+            //stop robot arm movement
+            sendMovementDataViaButton("STOP");
         }
     }
 
