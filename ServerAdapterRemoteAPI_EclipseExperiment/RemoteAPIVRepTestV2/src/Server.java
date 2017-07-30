@@ -15,19 +15,21 @@ public class Server implements Runnable {
 
 	private remoteApi vrep;
 	private int clientID;
-	public Server(remoteApi vrep, int clientID) {
+	private Socket connectionSocket;
+	public Server(remoteApi vrep, int clientID,Socket connectionSocket) {
 		this.vrep = vrep;
 		this.clientID = clientID;
+		this.connectionSocket = connectionSocket;
 	}
-	private ServerSocket welcomeSocket;
+	//private ServerSocket welcomeSocket;
 	@Override
 	public void run() {
 		System.out.println("Server thread is running...");  
 		String clientFeedback;
 		try {
-		 	welcomeSocket = new ServerSocket(6789);
-		 	welcomeSocket.setReuseAddress(false);
-		 	Socket connectionSocket = welcomeSocket.accept();
+		 	//welcomeSocket = new ServerSocket(6789);
+		 	//welcomeSocket.setReuseAddress(false);
+		 	//Socket connectionSocket = welcomeSocket.accept();
 			BufferedReader inFromClient =
 			    new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 		   	DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
@@ -50,20 +52,34 @@ public class Server implements Runnable {
                 }  else if (receivedBuffer.equals(MSG_SERVERSHUTDOWN)) { // receive data to control the gripper
                 	System.out.println("Disconnection requested");
                 	System.out.println("Server thread will be terminated");
-                	welcomeSocket.close();
+                	System.out.println("You can reconnect again");
+                	//welcomeSocket.close();
                 	Thread.currentThread().interrupt();
                 	return;
                 }
             }
-		} catch (IOException e ) {
+		} catch (IOException e) {
 			//e.printStackTrace();
-			try {
-				welcomeSocket.close();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+//			try {
+//				welcomeSocket.close();
+//			} catch (IOException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
 			System.out.println(e.toString());
+			System.out.println("Unexpected disconnection");
+        	System.out.println("Server thread will be terminated");
+        	System.out.println("You can reconnect again");
+			Thread.currentThread().interrupt();
+        	return;
+		}
+		catch(NullPointerException b){
+			System.out.println(b.toString());
+			System.out.println("Unexpected disconnection");
+        	System.out.println("Server thread will be terminated");
+        	System.out.println("You can reconnect again");
+			Thread.currentThread().interrupt();
+        	return;
 		}
 	}
 
