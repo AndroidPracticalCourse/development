@@ -282,12 +282,15 @@ public class ControlActivity extends Activity implements SensorEventListener {
     @Override
     protected void onResume() {
         super.onResume();
+        shouldstartRequestColorThreadRun = true;
+        startRequestColorThread();
         startSensors();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        shouldstartRequestColorThreadRun = false; //stop getting new color to conserve batt
         stopSensors(); // To conserve phone battery
     }
 
