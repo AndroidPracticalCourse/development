@@ -31,7 +31,9 @@ import java.net.Socket;
 
 import tumandroidcourse2017.remoteapiserverconnect.sensors.Accelerometer;
 
+import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.disconnect;
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocket;
+import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.unsetSocket;
 
 public class ControlActivity extends Activity implements SensorEventListener {
 
@@ -69,6 +71,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
         initWidgets();
         startSensors();
         startRequestColorThread();
+
     }
 
     //things for repeatedly request color in thread, backgrounded, repeatedly
@@ -242,6 +245,44 @@ public class ControlActivity extends Activity implements SensorEventListener {
             }
         });
 
+        //Disconnect Button
+        Button disconnectButton = (Button) findViewById(R.id.Disconnectbutton);
+        disconnectButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                showConfirmDisconnectDialog();
+            }
+        });
+
+    }
+
+    private void showConfirmDisconnectDialog(){
+        isConnectionError=true;
+        AlertDialog alertDialog = new AlertDialog.Builder(ControlActivity.this).create();
+        alertDialog.setTitle("Confirmation");
+        alertDialog.setMessage("Do you want to disconnect?");
+        // Alert dialog button
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Alert dialog action goes here
+                        // onClick button code here
+                        shouldstartRequestColorThreadRun=false;
+                        disconnect();
+                        dialog.dismiss();
+                        closeActivity();
+                    }
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Alert dialog action goes here
+                        // onClick button code here
+                        dialog.dismiss();// use dismiss to cancel alert dialog
+                    }
+                });
+        alertDialog.show();
+
     }
 
     // =============================================================
@@ -293,6 +334,13 @@ public class ControlActivity extends Activity implements SensorEventListener {
         shouldstartRequestColorThreadRun = false; //stop getting new color to conserve batt
         stopSensors(); // To conserve phone battery
     }
+
+
+    @Override
+    public void onBackPressed() {
+        showConfirmDisconnectDialog();
+    }
+
 
     // =============================================================
     //                      SENSOR METHODS

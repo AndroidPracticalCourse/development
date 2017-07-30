@@ -11,6 +11,7 @@ public class Server implements Runnable {
     private static final String MSG_GRIPPERDATA = "GRIPPERDATA";
     private static final String MSG_MOVEMENTDATAVIABUTTON = "MOVEMENTDATAVIABUTTON";
     private static final String MSG_REGCOLORDATA = "REQCOLORDATA";
+    private static final String MSG_SERVERSHUTDOWN = "REQSHUTDOWN";
 
 	private remoteApi vrep;
 	private int clientID;
@@ -45,7 +46,12 @@ public class Server implements Runnable {
                     receiveMovementDataViaButton(inFromClient, outToClient);
                 }  else if (receivedBuffer.equals(MSG_REGCOLORDATA)) { // receive data to control the gripper
                 	sendSenderImageData(inFromClient, outToClient);
-                }            
+                }  else if (receivedBuffer.equals(MSG_SERVERSHUTDOWN)) { // receive data to control the gripper
+                	System.out.println("Disconnection requested");
+                	System.out.println("Server thread will be terminated");
+                	Thread.currentThread().interrupt();
+                	return;
+                }
             }
 		} catch (IOException e ) {
 			//e.printStackTrace();

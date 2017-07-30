@@ -2,6 +2,7 @@ package tumandroidcourse2017.remoteapiserverconnect;
 
 import android.util.Log;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -22,5 +23,15 @@ public class SocketHandler {
 
     public static synchronized void unsetSocket(){
         SocketHandler.socket = null;
+    }
+
+    public static synchronized void disconnect(){
+        Socket clientSocket = getSocket();
+        try {
+            DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+            outToServer.writeBytes("REQSHUTDOWN" + '\n');
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
