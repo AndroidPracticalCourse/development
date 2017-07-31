@@ -9,9 +9,11 @@ public class ThreadSupervisor implements Runnable{
 	private int clientID;
 	private Server server;
 	private Thread serverthread;
-	public ThreadSupervisor(remoteApi vrep, int clientID){
+	private int ServerPort;
+	public ThreadSupervisor(remoteApi vrep, int clientID, int ServerPort){
 		this.vrep=vrep;
 		this.clientID=clientID;
+		this.ServerPort=ServerPort;
 	}
 	private ServerSocket welcomeSocket;
 	private Socket connectionSocket;
@@ -19,7 +21,7 @@ public class ThreadSupervisor implements Runnable{
 	public void run() {
 		// TODO Auto-generated method stub
 			try {
-				welcomeSocket = new ServerSocket(6789);
+				welcomeSocket = new ServerSocket(ServerPort);
 				connectionSocket = welcomeSocket.accept();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block

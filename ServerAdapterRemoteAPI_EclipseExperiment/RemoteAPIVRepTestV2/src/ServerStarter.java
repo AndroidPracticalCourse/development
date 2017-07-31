@@ -7,6 +7,7 @@ import coppelia.*;
 public class ServerStarter {
 	private static String IP;
     private static int Port;
+    private static int ServerPort;
     private static String menuchoice;
 	public static void main(String[] args){
 		String line;
@@ -21,8 +22,15 @@ public class ServerStarter {
 		    		Port=Integer.parseInt(br.readLine());
 		    	}
 		    	catch(NumberFormatException e){
-		    		System.out.println("Invalid port format! Please change port in serveradapterconfig.txt");
+		    		System.out.println("Invalid v-rep port format! Please change port in serveradapterconfig.txt");
 		    		Port=19997;
+		    	}
+		    	try{
+		    		ServerPort=Integer.parseInt(br.readLine());
+		    	}
+		    	catch(NumberFormatException e){
+		    		System.out.println("Invalid server adapter port format! Please change port in serveradapterconfig.txt");
+		    		ServerPort=6789;
 		    	}
 		    	
 
@@ -32,14 +40,17 @@ public class ServerStarter {
 			FileWriter fw;
 			IP="127.0.0.1";
 			Port=19997;
+			ServerPort=6789;
 			try {
 				fw = new FileWriter("serveradapterconfig.txt");
 				bw = new BufferedWriter(fw);
-				bw.write("Edit IP and Port of V-REP here. Second line is IP. Third line is Port.");
+				bw.write("Edit IP and Port of V-REP here. Second line is RemoteAPI IP. Third line is RemoteAPI Port. Forth line is Server Port.");
 				bw.newLine();
 				bw.write("127.0.0.1");
 				bw.newLine();
 				bw.write("19997");
+				bw.newLine();
+				bw.write("6789");
 				bw.flush();
 				bw.close();
 			} catch (IOException e1) {
@@ -48,11 +59,12 @@ public class ServerStarter {
 				e1.printStackTrace();
 			}
 			
-			System.out.println("serveradapterconfig.txt is not found. Created with default value of 127.0.0.1:19997");
+			System.out.println("serveradapterconfig.txt is not found. Created with default value of RemoteAPI=127.0.0.1:19997, ServerPort=6789");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			IP="127.0.0.1";
 			Port=19997;
+			ServerPort=6789;
 			System.out.println("serveradapterconfig.txt is not in right format!");
 			System.out.println("please manually delete it and restart this server adapter.");
 			
@@ -71,7 +83,7 @@ public class ServerStarter {
         	System.exit(0);
         }
         System.out.println("Starting ThreadSupervisor thread...");
-        ThreadSupervisor ts = new ThreadSupervisor(vrep, clientID);
+        ThreadSupervisor ts = new ThreadSupervisor(vrep, clientID, ServerPort);
     	Thread tsthread = new Thread(ts);
     	tsthread.start();
         Scanner sc = new Scanner(System.in);

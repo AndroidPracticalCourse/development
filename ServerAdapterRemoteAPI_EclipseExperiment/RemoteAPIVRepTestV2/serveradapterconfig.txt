@@ -1,3 +1,4 @@
-Edit IP and Port of V-REP here. Second line is IP. Third line is Port.
+Edit IP and Port of V-REP here. Second line is RemoteAPI IP. Third line is RemoteAPI Port. Forth line is Server Port.
 127.0.0.1
 19997
+6789
