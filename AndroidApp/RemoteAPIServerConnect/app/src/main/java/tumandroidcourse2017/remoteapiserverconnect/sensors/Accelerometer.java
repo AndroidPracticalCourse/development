@@ -39,43 +39,6 @@ public class Accelerometer {
         }
     }
 
-    /*
-    public float calculateVelocity() {
-        long currentTime = System.currentTimeMillis();
-        long interval = currentTime - lastUpdateTime;
-
-        if (interval > UPDATE_FREQ) {
-            lastUpdateTime = currentTime;
-            double acceleration = event.values[0] + event.values[1] + event.values[2] - lastX - lastY - lastZ;
-
-            /* To measure the real acceleration of the device, the contribution of the force of gravity needs to be removed
-            // A high-pass filter is used here
-            final float alpha = Float.valueOf("0.8");
-
-            // Isolate the force of gravity
-            gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
-            gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
-            gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
-
-            // Remove the gravity contribution
-            linearAcceleration[0] = event.values[0] - gravity[0];
-            linearAcceleration[1] = event.values[1] - gravity[1];
-            linearAcceleration[2] = event.values[2] - gravity[2];
-            double acceleration = linearAcceleration[0] + linearAcceleration[1];
-
-            // Motion at constant acceleration: v(t) = v0 + at
-            velocity = v0 + (acceleration * (interval / (double) 1000));
-            //v0 = velocity;
-            lastX = event.values[0];
-            lastY = event.values[1];
-            lastZ = event.values[2];
-        }
-
-        DecimalFormat df = new DecimalFormat("#");
-        return Float.valueOf(df.format(velocity));
-    }
-    */
-
     public long getLastUpdateTime() {
         return lastUpdateTime;
     }
