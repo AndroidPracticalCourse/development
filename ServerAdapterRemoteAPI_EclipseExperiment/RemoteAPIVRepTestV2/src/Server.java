@@ -30,8 +30,10 @@ public class Server implements Runnable {
 		 	//welcomeSocket = new ServerSocket(6789);
 		 	//welcomeSocket.setReuseAddress(false);
 		 	//Socket connectionSocket = welcomeSocket.accept();
+
 			BufferedReader inFromClient =
 			    new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+			
 		   	DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 		   	connectionSocket.setKeepAlive(false);
 			while (true) {
@@ -47,25 +49,18 @@ public class Server implements Runnable {
                     receiveGripperData(inFromClient, outToClient);
                 } else if (receivedBuffer.equals(MSG_MOVEMENTDATAVIABUTTON)) { // receive data to control the gripper
                     receiveMovementDataViaButton(inFromClient, outToClient);
-                }  else if (receivedBuffer.equals(MSG_REGCOLORDATA)) { // receive data to control the gripper
+                }  else if (receivedBuffer.equals(MSG_REGCOLORDATA)) { // receive request to send detected color back
                 	sendSenderImageData(inFromClient, outToClient);
-                }  else if (receivedBuffer.equals(MSG_SERVERSHUTDOWN)) { // receive data to control the gripper
+                }  else if (receivedBuffer.equals(MSG_SERVERSHUTDOWN)) { // disconnection request
                 	System.out.println("Disconnection requested");
                 	System.out.println("Server thread will be terminated");
                 	System.out.println("You can reconnect again");
-                	//welcomeSocket.close();
+
                 	Thread.currentThread().interrupt();
                 	return;
                 }
             }
 		} catch (IOException e) {
-			//e.printStackTrace();
-//			try {
-//				welcomeSocket.close();
-//			} catch (IOException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
 			System.out.println(e.toString());
 			System.out.println("Unexpected disconnection");
         	System.out.println("Server thread will be terminated");
