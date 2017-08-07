@@ -13,7 +13,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +32,6 @@ import tumandroidcourse2017.remoteapiserverconnect.sensors.Accelerometer;
 
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.disconnect;
 import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.getSocket;
-import static tumandroidcourse2017.remoteapiserverconnect.SocketHandler.unsetSocket;
 
 public class ControlActivity extends Activity implements SensorEventListener {
 
@@ -57,10 +55,8 @@ public class ControlActivity extends Activity implements SensorEventListener {
     private int tiltUpDown;
     private long accelerometerLastUpdateTime = 0;
 
-    // Logging
-    private static final String TAG = ControlActivity.class.getSimpleName();
-
-
+    //things for repeatedly request color in thread, backgrounded, repeatedly
+    private static boolean shouldstartRequestColorThreadRun;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,11 +67,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
         initWidgets();
         startSensors();
         startRequestColorThread();
-
     }
-
-    //things for repeatedly request color in thread, backgrounded, repeatedly
-    private static boolean shouldstartRequestColorThreadRun;
 
     @Override
     public void onStart() {
@@ -248,41 +240,40 @@ public class ControlActivity extends Activity implements SensorEventListener {
         });
 
         //Disconnect Button
-        Button disconnectButton = (Button) findViewById(R.id.Disconnectbutton);
+        Button disconnectButton = (Button) findViewById(R.id.btn_disconnect);
         disconnectButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                showConfirmDisconnectDialog();
+            showConfirmDisconnectDialog();
             }
         });
 
     }
 
     private void showConfirmDisconnectDialog(){
-        isConnectionError=true;
+        isConnectionError = true;
         AlertDialog alertDialog = new AlertDialog.Builder(ControlActivity.this).create();
         alertDialog.setTitle("Confirmation");
         alertDialog.setMessage("Do you want to disconnect?");
         // Alert dialog button
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "YES",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Alert dialog action goes here
-                        // onClick button code here
-                        shouldstartRequestColorThreadRun=false;
-                        disconnect();
-                        dialog.dismiss();
-                        closeActivity();
-                    }
-                });
+            new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Alert dialog action goes here
+                    // onClick button code here
+                    shouldstartRequestColorThreadRun=false;
+                    disconnect();
+                    dialog.dismiss();
+                    closeActivity();
+                }
+            });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Alert dialog action goes here
-                        // onClick button code here
-                        dialog.dismiss();// use dismiss to cancel alert dialog
-                    }
-                });
+            new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Alert dialog action goes here
+                    // onClick button code here
+                    dialog.dismiss();// use dismiss to cancel alert dialog
+                }
+            });
         alertDialog.show();
 
     }
@@ -292,7 +283,7 @@ public class ControlActivity extends Activity implements SensorEventListener {
     // =============================================================
 
     private void showErrorDialog(String ErrorMsg){
-        isConnectionError=true;
+        isConnectionError = true;
         TextView textConnStatus = (TextView) findViewById(R.id.data_connStatus);
         textConnStatus.setText(R.string.text_disconnected);
         textConnStatus.setTextColor(getResources().getColor(R.color.red));
@@ -356,14 +347,12 @@ public class ControlActivity extends Activity implements SensorEventListener {
             mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
             registerSensorListeners();
-            Log.i(TAG, "Sensors started");
         }
     }
 
     private void stopSensors() {
         isSensorsStarted = false;
         mSensorManager.unregisterListener(this);
-        Log.i(TAG, "Sensors stopped");
     }
 
     private void registerSensorListeners() {

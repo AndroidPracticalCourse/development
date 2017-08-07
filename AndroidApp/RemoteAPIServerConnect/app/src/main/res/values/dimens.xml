@@ -17,6 +17,14 @@
     <dimen name="main_inputFieldsSpacing">20dp</dimen>
     <dimen name="main_inputFieldsToButton">50dp</dimen>
 
+    <!-- ControlActivity -->
 
+    <dimen name="control_padding">40dp</dimen>
+    <dimen name="control_headerIconDim">40dp</dimen>
+    <dimen name="control_simSectionPadding">15dp</dimen>
+    <dimen name="control_simIconDim">50dp</dimen>
+    <dimen name="control_btnControlSectionPadding">35dp</dimen>
+    <dimen name="control_arrowKeysDim">50dp</dimen>
+    <dimen name="control_gripperBtnDim">80dp</dimen>
 
 </resources>

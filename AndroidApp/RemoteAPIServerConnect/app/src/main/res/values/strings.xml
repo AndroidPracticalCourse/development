@@ -32,6 +32,7 @@
     <string name="text_button">BUTTON</string>
     <string name="text_simulation">SIMULATION</string>
     <string name="text_holdToGrab">HOLD TO \nGRAB</string>
+    <string name="text_disconnect">DISCONNECT</string>
 
     <string name="msg_simulation">SIMULATION</string>
     <string name="msg_movementdata">MOVEMENTDATA</string>
